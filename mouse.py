@@ -15,18 +15,15 @@ class Mouse:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-            action = [0,0,0,0,1]
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
-                    action = [0,1,0,0,0]
-                if event.key == pygame.K_RIGHT:
-                    action == [0,0,0,1,0]
-                if event.key == pygame.K_DOWN:
-                    action == [0,0,1,0,0]
-                if event.key == pygame.K_DOWN:
-                    action == [1,0,0,0,0]
-                    
-        self.move(action)
+                    self.move([0,1,0,0,0])
+                elif event.key == pygame.K_RIGHT:
+                    self.move([0,0,0,1,0])
+                elif event.key == pygame.K_LEFT:
+                    self.move([0,0,1,0,0])
+                elif event.key == pygame.K_DOWN:
+                    self.move([1,0,0,0,0])
          
     def move(self, action):
         # ne rien faire
@@ -66,7 +63,7 @@ class Mouse:
             self.pos = [self.case_number % self.plateau.n_cols, self.case_number // self.plateau.n_rows]
         
     def draw_mouse(self, screen):
-        pygame.draw.circle (screen, colors.BLUE2, (self.case_number[0]*size.BLOCK_SIZE+size.BLOCK_SIZE/2, self.case_number[1]*size.BLOCK_SIZE+size.BLOCK_SIZE/2), size.BLOCK_SIZE/3, 0)
+        pygame.draw.circle (screen, colors.BLUE2, (self.pos[0]*size.BLOCK_SIZE+size.BLOCK_SIZE/2, self.pos[1]*size.BLOCK_SIZE+size.BLOCK_SIZE/2), size.BLOCK_SIZE/3, 0)
         
     # Get current state of the game
     def get_state(self):
