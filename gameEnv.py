@@ -1,4 +1,4 @@
-
+from plateau import Plateau, Case
 
 # Define the environment class
 class GameEnv:

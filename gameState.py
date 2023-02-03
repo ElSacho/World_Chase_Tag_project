@@ -1,39 +1,23 @@
-from cgitb import reset
-from os import remove
-from turtle import width
-import pygame
-import random
-from enum import Enum
-from collections import namedtuple
-import numpy as np
-
-pygame.init()
-font = pygame.font.Font('Reinforcement-Learning-for-the-dino-game/arial.ttf', 25)
-
-Point = namedtuple('Point', 'x, y')
-# rgb colors
-WHITE = (255, 255, 255)
-RED = (200,0,0)
-BLUE1 = (0, 0, 255)
-BLUE2 = (0, 100, 255)
-BLACK = (0,0,0)
-
-BLOCK_SIZE = 20
-SPEED = 25
+from plateau import Plateau, Cases
+from cat import Cat
+from mouse import Mouse
 
 # Define the game state class
 class GameState:
-    def __init__(self, nb_state):
-        self.nb_state = nb_state
+    def __init__(self, n_cols, n_rows):
+        self.n_cols = n_cols
+        self.n_rows = n_rows
+        self.plateau = Plateau(n_cols, n_rows)
+        self.mouse = Mouse(0, self.plateau)
+        self.cat = Cat( n_cols* n_rows, self.plateau)
         
-    
     # Get current state of the game
     def get_state(self):
-        return self.state
+        return self.cat.get_state(), self.mouse.get_state()
 
     # Check if the game is finished
     def is_done(self):
-        pass
+        return self.cat.hasEaten(self.mouse)
 
     # Get the reward for the current state
     def get_reward(self):
