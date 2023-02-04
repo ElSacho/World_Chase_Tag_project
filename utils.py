@@ -7,5 +7,5 @@ class colors:
     BLACK = (0,0,0)
 
 class size:
-    BLOCK_SIZE = 20*2*3
+    BLOCK_SIZE = 20
     CONTOUR_SIZE = 2

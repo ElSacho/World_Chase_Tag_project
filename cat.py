@@ -7,9 +7,7 @@ class Cat:
     def __init__(self, starting_position, plateau):
         self.case_number = starting_position
         self.plateau = plateau
-        self.pos = [self.case_number % plateau.n_cols, self.case_number // plateau.n_rows]
-        self.time_to_spend_on_ralentisseur = 0
-        self.isOnRalentisseur = False
+        self.pos = [(self.case_number % plateau.n_cols )*size.BLOCK_SIZE + size.BLOCK_SIZE/2, (self.case_number // plateau.n_rows) *size.BLOCK_SIZE + size.BLOCK_SIZE/2]
         
     def move_with_keyboard(self):
         for event in pygame.event.get():
@@ -25,6 +23,10 @@ class Cat:
                     self.move([0,0,1,0,0])
                 elif event.key == pygame.K_DOWN:
                     self.move([1,0,0,0,0])
+                    
+        print(f'pos cases{self.pos}')
+        print(f'pos {[self.case_number % self.plateau.n_cols, self.case_number // self.plateau.n_rows]}')
+        print(f'case number {self.case_number}')
 
         
     
@@ -44,49 +46,38 @@ class Cat:
         # aller en bas
         elif action == [1,0,0,0,0]:
             self.move_down()
-        
+            
+    def update_case_number(self):
+        x, y = int(self.pos[1]/size.BLOCK_SIZE), int(self.pos[0]/size.BLOCK_SIZE)
+        self.case_number = x*self.plateau.n_cols + y
+        if self.plateau.cases[self.case_number].timeToSpend == 0:
+            self.pos = [(self.case_number % self.plateau.n_cols )*size.BLOCK_SIZE + size.BLOCK_SIZE/2, (self.case_number // self.plateau.n_rows) *size.BLOCK_SIZE + size.BLOCK_SIZE/2]
         
     def move_down(self):
-        ralentisseur = self.analyse_ralentisseur()
         if self.case_number + self.plateau.n_cols < self.plateau.n_cols * self.plateau.n_rows:
-            if ralentisseur == 0:
-                self.case_number = self.case_number + self.plateau.n_cols
-                self.pos = [self.case_number % self.plateau.n_cols, self.case_number // self.plateau.n_rows]
-            else :
-                lenght_mouvement = int(size.BLOCK_SIZE / (self.plateau.cases[self.case_number].timeToSpend + 1))/size.BLOCK_SIZE 
-                self.pos = [self.case_number % self.plateau.n_cols, self.case_number // self.plateau.n_rows + lenght_mouvement]
+            lenght_mouvement = 1 / (self.plateau.cases[self.case_number].timeToSpend + 1)
+            self.pos[1] += lenght_mouvement * size.BLOCK_SIZE
+            self.update_case_number()
             
     def move_up(self):
-        ralentisseur = self.analyse_ralentisseur()
         if self.case_number - self.plateau.n_cols >= 0:
-            if ralentisseur == 0:
-                self.case_number = self.case_number - self.plateau.n_cols
-                self.pos = [self.case_number % self.plateau.n_cols, self.case_number // self.plateau.n_rows]
-            else :
-                lenght_mouvement = int(size.BLOCK_SIZE / (self.plateau.cases[self.case_number].timeToSpend + 1))/size.BLOCK_SIZE 
-                self.pos = [self.case_number % self.plateau.n_cols, self.case_number // self.plateau.n_rows - lenght_mouvement]
+            lenght_mouvement = 1 / (self.plateau.cases[self.case_number].timeToSpend + 1)
+            self.pos[1] -= lenght_mouvement * size.BLOCK_SIZE
+            self.update_case_number()
             
             
     def move_right(self):
-        ralentisseur = self.analyse_ralentisseur()
         if (self.case_number+1) % self.plateau.n_cols != 0:
-            if ralentisseur == 0:
-                self.case_number += 1
-                self.pos = [self.case_number % self.plateau.n_cols, self.case_number // self.plateau.n_rows]
-            else :
-                lenght_mouvement = int(size.BLOCK_SIZE / (self.plateau.cases[self.case_number].timeToSpend + 1))/size.BLOCK_SIZE 
-                self.pos = [self.case_number % self.plateau.n_cols + lenght_mouvement, self.case_number // self.plateau.n_rows]
+            lenght_mouvement = 1 / (self.plateau.cases[self.case_number].timeToSpend + 1)
+            self.pos[0] += lenght_mouvement * size.BLOCK_SIZE
+            self.update_case_number()
             
             
     def move_left(self):
-        ralentisseur = self.analyse_ralentisseur()
         if (self.case_number) % self.plateau.n_cols != 0:
-            if ralentisseur == 0:
-                self.case_number -= 1
-                self.pos = [self.case_number % self.plateau.n_cols, self.case_number // self.plateau.n_rows]
-            else :
-                lenght_mouvement = int(size.BLOCK_SIZE / (self.plateau.cases[self.case_number].timeToSpend + 1))/size.BLOCK_SIZE 
-                self.pos = [self.case_number % self.plateau.n_cols - lenght_mouvement, self.case_number // self.plateau.n_rows]
+            lenght_mouvement = 1 / (self.plateau.cases[self.case_number].timeToSpend + 1)
+            self.pos[0] -= lenght_mouvement * size.BLOCK_SIZE
+            self.update_case_number()
             
     
     def analyse_ralentisseur(self):
@@ -116,7 +107,8 @@ class Cat:
         return self.case_number == mouse.case_number
         
     def draw_cat(self, screen):
-        pygame.draw.circle (screen, colors.BLUE1, (self.pos[0]*size.BLOCK_SIZE+size.BLOCK_SIZE/2, self.pos[1]*size.BLOCK_SIZE+size.BLOCK_SIZE/2), size.BLOCK_SIZE/3, 0)
+        # pygame.draw.circle (screen, colors.BLUE1, (self.pos[0]+size.BLOCK_SIZE/2, self.pos[1]+size.BLOCK_SIZE/2), size.BLOCK_SIZE/3, 0)
+        pygame.draw.circle (screen, colors.BLUE1, (self.pos[0], self.pos[1]), size.BLOCK_SIZE/3, 0)
         
     # Get current state of the game
     def get_state(self):

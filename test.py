@@ -13,14 +13,14 @@ class Game:
         self.mouse = Mouse(0, self.plateau)
         self.cat = Cat( n_cols* n_rows -1, self.plateau)
         self.nb_step = 0
-        SCREEN_SIZE = (800, 600)
+        SCREEN_SIZE = (n_cols*size.BLOCK_SIZE, n_rows*size.BLOCK_SIZE)
         self.screen =  pygame.display.set_mode(SCREEN_SIZE)
         #self.screen = pygame.display.set_mode((n_cols*size.BLOCK_SIZE, n_rows*size.BLOCK_SIZE))
         pygame.display.set_caption('Chase Tag')
         
     def step(self):
         self.nb_step +=1
-        if self.nb_step % 2 == 0 and False:
+        if self.nb_step % 2 == 0 or True:
             self.mouse.move_with_keyboard()
         else : 
             self.cat.move_with_keyboard()
@@ -33,7 +33,7 @@ class Game:
         return self.cat.hasEaten(self.mouse)
     
 if __name__ == '__main__':
-    game = Game(5, 5)
+    game = Game(25, 25)
     
     #game loop
     while True:

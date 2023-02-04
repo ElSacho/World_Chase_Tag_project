@@ -1,5 +1,7 @@
 import pygame
 from utils import colors, size
+import random
+
 
 class Case:
     def __init__(self, case_number, n_cols, n_rows):
@@ -23,7 +25,7 @@ class Case:
             pygame.draw.rect(screen, colors.RED, (self.pos[0]*size.BLOCK_SIZE+size.CONTOUR_SIZE, self.pos[1]*size.BLOCK_SIZE+size.CONTOUR_SIZE, size.BLOCK_SIZE-2*size.CONTOUR_SIZE, size.BLOCK_SIZE-2*size.CONTOUR_SIZE), 0)
         
 class Plateau:
-    def __init__(self, n_cols, n_rows, cases_to_spend_time = range(1, 20)):
+    def __init__(self, n_cols, n_rows, cases_to_spend_time = random.sample(range(25*25-1), 40)):
         self.n_cols = n_cols
         self.n_rows = n_rows
         self.cases = []
