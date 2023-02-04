@@ -37,14 +37,14 @@ class GameEnv:
         if self.nb_step % 2 == 0:
             self.nb_step += 1
             next_state_cat = self.cat.take_action(self.mouse)
-            done = self.cat.is_done()
+            done = self.cat.is_done(self.mouse)
             reward = self.cat.get_reward(self.mouse)
             self.cat_state = next_state_cat
             return next_state_cat, reward, done, {}
         else :
             self.nb_step += 1
             next_state_mouse = self.mouse.take_action(self.cat)
-            done = self.mouse.is_done()
+            done = self.mouse.is_done(self.cat)
             reward = self.mouse.get_reward(self.cat)
             self.mouse_state = next_state_mouse
             return next_state_mouse, reward, done, {}
@@ -58,10 +58,9 @@ if __name__ == '__main__':
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 break
-        print(game.cat.case_number)
+
         next_state, reward, game_over, dic = game.step()
         game.draw()
-        print(game_over)
     #   
         if game_over == True:
             break     

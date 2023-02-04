@@ -104,4 +104,4 @@ class Cat:
         
     def draw_cat(self, screen):
         # pygame.draw.circle (screen, colors.BLUE1, (self.pos[0]+size.BLOCK_SIZE/2, self.pos[1]+size.BLOCK_SIZE/2), size.BLOCK_SIZE/3, 0)
-        pygame.draw.circle (screen, colors.BLUE1, (self.pos[0], self.pos[1]), size.BLOCK_SIZE/3, 0)
+        pygame.draw.circle (screen, colors.GREEN, (self.pos[0], self.pos[1]), size.BLOCK_SIZE/3, 0)

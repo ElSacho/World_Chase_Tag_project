@@ -36,8 +36,8 @@ class CatState(Cat):
         return True
   
     # Check if the game is finished
-    def is_done(self):
-        return self.MouseIsDead
+    def is_done(self, mouse):
+        return self.hasEaten(mouse)
     # Get the reward for the current state
     def get_reward(self, mouse):
         pos = int(self.pos[1]/size.BLOCK_SIZE), int(self.pos[0]/size.BLOCK_SIZE)

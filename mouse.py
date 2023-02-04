@@ -17,13 +17,13 @@ class Mouse:
                 pygame.quit()
                 quit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
+                if event.unicode == 'z':
                     self.move([0,1,0,0,0])
-                elif event.key == pygame.K_RIGHT:
+                elif event.unicode == 's':
                     self.move([0,0,0,1,0])
-                elif event.key == pygame.K_LEFT:
+                elif event.unicode == 'q':
                     self.move([0,0,1,0,0])
-                elif event.key == pygame.K_DOWN:
+                elif event.unicode == 'w':
                     self.move([1,0,0,0,0])
            
     def move(self, action):

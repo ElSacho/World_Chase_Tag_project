@@ -37,8 +37,8 @@ class MouseState(Mouse):
         return True
   
     # Check if the game is finished
-    def is_done(self):
-        return self.isDead
+    def is_done(self, cat):
+        return cat.hasEaten(self)
 
     # Get the reward for the current state
     def get_reward(self, cat):

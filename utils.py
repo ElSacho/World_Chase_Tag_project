@@ -5,7 +5,8 @@ class colors:
     BLUE1 = (0, 0, 255)
     BLUE2 = (0, 100, 255)
     BLACK = (0,0,0)
+    GREEN = (0, 200, 0)
 
 class size:
-    BLOCK_SIZE = 90
+    BLOCK_SIZE = 20
     CONTOUR_SIZE = 2
