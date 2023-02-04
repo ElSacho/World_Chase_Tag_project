@@ -30,12 +30,8 @@ class GameState:
 
     # Get the reward for the current state
     def get_reward(self):
-        pass
-
-    # Get all possible actions for the current state
-    def get_actions(self):
-        pass
+        return self.cat.get_reward(self.mouse), self.mouse.get_reward(self.cat)
 
     # Take an action and return the next state of the game
     def take_action(self, action):
-        pass
+        return self.cat.take_action(), self.mouse.take_action()

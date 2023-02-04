@@ -22,7 +22,7 @@ class Game:
         
     def step(self):
         self.nb_step +=1
-        if self.nb_step % 2 == 0 and False:
+        if self.nb_step % 2 == 0 :
             self.mouse.move_with_keyboard()
             self.mouse.get_state(self.cat)
         else : 

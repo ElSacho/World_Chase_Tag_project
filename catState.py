@@ -45,7 +45,8 @@ class CatState(Cat):
         return 1/(1+(pos[0]+pos_mouse[0])**2+(pos[1]+pos_mouse[1])**2)
 
     # Take an action and return the next state of the game
-    def take_action(self):
-        one_hot_encoding = [0] * 5
-        one_hot_encoding[random.randint(0, 4)] = 1
-        return one_hot_encoding
+    def take_action(self , mouse):
+        action = [0] * 5
+        action[random.randint(0, 4)] = 1
+        self.move(action)
+        return self.get_state(mouse)
