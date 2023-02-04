@@ -1,6 +1,7 @@
 from plateau import Plateau
 import pygame
 from utils import colors, size
+import numpy as np
 
 
 class Mouse:
@@ -8,6 +9,7 @@ class Mouse:
         self.case_number = starting_position
         self.plateau = plateau
         self.pos = [(self.case_number % plateau.n_cols )*size.BLOCK_SIZE + size.BLOCK_SIZE/2, (self.case_number // plateau.n_rows) *size.BLOCK_SIZE + size.BLOCK_SIZE/2]
+        self.isDead = False
         
     def move_with_keyboard(self):
         for event in pygame.event.get():
@@ -23,13 +25,7 @@ class Mouse:
                     self.move([0,0,1,0,0])
                 elif event.key == pygame.K_DOWN:
                     self.move([1,0,0,0,0])
-                    
-        print(f'pos cases{self.pos}')
-        print(f'pos {[self.case_number % self.plateau.n_cols, self.case_number // self.plateau.n_rows]}')
-        print(f'case number {self.case_number}')
-
-        
-    
+           
     def move(self, action):
         # ne rien faire
         if action == [0,0,0,0,1]:
@@ -64,22 +60,19 @@ class Mouse:
             lenght_mouvement = 1 / (self.plateau.cases[self.case_number].timeToSpend + 1)
             self.pos[1] -= lenght_mouvement * size.BLOCK_SIZE
             self.update_case_number()
-            
-            
+                  
     def move_right(self):
         if (self.case_number+1) % self.plateau.n_cols != 0:
             lenght_mouvement = 1 / (self.plateau.cases[self.case_number].timeToSpend + 1)
             self.pos[0] += lenght_mouvement * size.BLOCK_SIZE
             self.update_case_number()
-            
-            
+                   
     def move_left(self):
         if (self.case_number) % self.plateau.n_cols != 0:
             lenght_mouvement = 1 / (self.plateau.cases[self.case_number].timeToSpend + 1)
             self.pos[0] -= lenght_mouvement * size.BLOCK_SIZE
             self.update_case_number()
-            
-    
+              
     def analyse_ralentisseur(self):
         print(self.time_to_spend_on_ralentisseur)
         print(f'case : {self.plateau.cases[self.case_number].timeToSpend}')
@@ -102,25 +95,6 @@ class Mouse:
         print(self.time_to_spend_on_ralentisseur)
         # On renvoie le temps d'attente final
         return self.time_to_spend_on_ralentisseur
+    
     def draw_mouse(self, screen):
-        pygame.draw.circle (screen, colors.BLUE2, (self.pos[0], self.pos[1]), size.BLOCK_SIZE/3, 0)
-        
-    # Get current state of the game
-    def get_state(self):
-        return self.state
-
-    # Check if the game is finished
-    def is_done(self):
-        pass
-
-    # Get the reward for the current state
-    def get_reward(self):
-        pass
-
-    # Get all possible actions for the current state
-    def get_actions(self):
-        pass
-
-    # Take an action and return the next state of the game
-    def take_action(self, action):
-        pass
+        pygame.draw.circle (screen, colors.BLUE2, (self.pos[0], self.pos[1]), size.BLOCK_SIZE/3, 0)   
