@@ -11,6 +11,7 @@ class GameEnv:
     def __init__(self, n_cols, n_rows, vision = 2):
         self.n_cols = n_cols
         self.n_rows = n_rows
+        self.vision = vision
         self.plateau = Plateau(n_cols, n_rows)
         self.mouse = MouseState(0, self.plateau, vision = vision)
         self.cat = CatState( n_cols* n_rows -1, self.plateau, vision = vision)
@@ -26,18 +27,18 @@ class GameEnv:
     
     # Reset the environment to its initial state
     def reset(self):
-        self.mouse = MouseState(0, self.plateau)
-        self.cat = CatState( self.n_cols* self.n_rows -1, self.plateau)
+        self.mouse = MouseState(0, self.plateau, vision = self.vision)
+        self.cat = CatState( self.n_cols* self.n_rows -1, self.plateau, vision = self.vision)
         return self.cat.get_state(self.mouse), self.mouse.get_state(self.cat)
     
     def reset_cat(self):
-        self.mouse = MouseState(0, self.plateau)
-        self.cat = CatState( self.n_cols* self.n_rows -1, self.plateau)
+        self.mouse = MouseState(0, self.plateau, vision = self.vision)
+        self.cat = CatState( self.n_cols* self.n_rows -1, self.plateau, vision = self.vision)
         return self.cat.get_state(self.mouse)
     
     def reset_mouse(self):
-        self.mouse = MouseState(0, self.plateau)
-        self.cat = CatState( self.n_cols* self.n_rows -1, self.plateau)
+        self.mouse = MouseState(0, self.plateau, vision = self.vision)
+        self.cat = CatState( self.n_cols* self.n_rows -1, self.plateau, vision = self.vision)
         return self.mouse.get_state(self.cat)
     
     def draw(self):
@@ -49,7 +50,7 @@ class GameEnv:
     # Step the environment by taking an action
     def cat_step(self, action):
         self.nb_step += 1
-        next_state_cat = self.cat.take_action(self.mouse)
+        next_state_cat = self.cat.take_action(action, self.mouse)
         done = self.cat.is_done(self.mouse)
         reward = self.cat.get_reward(self.mouse)
         self.cat_state = next_state_cat

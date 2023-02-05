@@ -28,8 +28,8 @@ class Net(nn.Module):
         return F.softmax(x, dim=1)
     
 class CatAgent(CatState):
-    def __init__(self, hidden_size):
-        super().__init__()
+    def __init__(self, hidden_size, vision = 2):
+        super().__init__(vision = vision)
         self.net = Net(self.observation_space,  hidden_size, self.action_space)
         self.reward = 0
         
@@ -85,7 +85,7 @@ def filter_batch(batch, percentile):
 
 
 if __name__ == "__main__":
-    env = GameEnv(5,5)
+    env = GameEnv(5,5, vision = 0)
     # env = gym.wrappers.Monitor(env, directory="mon", force=True)
     cat_obs_size = env.cat_observation_space
     cat_n_actions = env.cat_action_space
@@ -94,8 +94,7 @@ if __name__ == "__main__":
     objective = nn.CrossEntropyLoss()
     optimizer = optim.Adam(params=cat_net.parameters(), lr=0.01)
 
-    for iter_no, batch in enumerate(iterate_batches(
-            env, cat_net, BATCH_SIZE)):
+    for iter_no, batch in enumerate(iterate_batches(env, cat_net, BATCH_SIZE)):
         obs_v, acts_v, reward_b, reward_m = filter_batch(batch, PERCENTILE)
         optimizer.zero_grad()
         action_scores_v = cat_net(obs_v)

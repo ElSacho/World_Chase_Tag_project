@@ -48,13 +48,13 @@ class CatState(Cat):
         pos_mouse = int(mouse.pos[1]/size.BLOCK_SIZE), int(mouse.pos[0]/size.BLOCK_SIZE)
         distance = (pos[0]+pos_mouse[0])**2+(pos[1]+pos_mouse[1])**2
         if distance <= self.vision:
-            reward = 1/(0.001+distance)
+            reward = 0
         if distance == 1:
-            reward = 5
+            reward = 0
         if distance == 0:
-            reward = 20
+            reward = 20/self.step
         if distance > self.vision :
-            reward = -0.3
+            reward = 0
         return reward
 
     # Get all possible actions for the current state
@@ -62,8 +62,9 @@ class CatState(Cat):
         return [[1, 0, 0, 0, 0], [0, 1, 0, 0, 0], [0, 0, 1, 0, 0], [0, 0, 0, 1, 0], [0, 0, 0, 0, 1]]
 
     # Take an action and return the next state of the game
-    def take_action(self , mouse):
-        action = [0] * 5
-        action[random.randint(0, 4)] = 1
+    def take_action(self , number_action, mouse):
+        # action = [0] * 5
+        # action[random.randint(0, 4)] = 1
+        action = self.get_actions()[number_action]
         self.move(action)
         return self.get_state(mouse)
