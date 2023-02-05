@@ -11,6 +11,9 @@ class CatState(Cat):
     def __init__(self, starting_position, plateau, vision = 2):
         super().__init__(starting_position, plateau)
         self.vision = vision
+        # La vision plus l'ecart de position avec le chasseur
+        self.observation_space = (2*vision+1)**2+2
+        self.action_space = 5
             
     # Get current state of the game  
     def get_state(self, mouse):

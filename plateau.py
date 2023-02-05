@@ -33,7 +33,6 @@ class Plateau:
         for i in range(n_cols*n_rows):
             self.cases.append(Case(i, n_cols, n_rows))
         self.timeToSpend(cases_to_spend_time)
-
             
     def timeToSpend(self, tab_cases_concerned):
         for i in tab_cases_concerned:

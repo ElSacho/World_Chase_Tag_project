@@ -8,12 +8,12 @@ from catState import CatState
 
 # Define the environment class
 class GameEnv:
-    def __init__(self, n_cols, n_rows):
+    def __init__(self, n_cols, n_rows, vision = 2):
         self.n_cols = n_cols
         self.n_rows = n_rows
         self.plateau = Plateau(n_cols, n_rows)
-        self.mouse = MouseState(0, self.plateau)
-        self.cat = CatState( n_cols* n_rows -1, self.plateau)
+        self.mouse = MouseState(0, self.plateau, vision = vision)
+        self.cat = CatState( n_cols* n_rows -1, self.plateau, vision = vision)
         self.nb_step = 0
         SCREEN_SIZE = (n_cols*size.BLOCK_SIZE, n_rows*size.BLOCK_SIZE)
         self.screen =  pygame.display.set_mode(SCREEN_SIZE)

@@ -8,5 +8,5 @@ class colors:
     GREEN = (0, 200, 0)
 
 class size:
-    BLOCK_SIZE = 20
+    BLOCK_SIZE = 50
     CONTOUR_SIZE = 2

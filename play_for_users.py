@@ -37,12 +37,13 @@ class Game:
         return self.cat.hasEaten(self.mouse)
     
 if __name__ == '__main__':
-    game = Game(25, 25)
+    game = Game(15, 15)
     
     #game loop
     while True:
         game_over = game.step()
-    #    
+        game_over = game.step()
+    #    sdddddqqq
         if game_over == True:
             break     
     pygame.quit()
