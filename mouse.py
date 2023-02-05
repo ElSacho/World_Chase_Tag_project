@@ -10,6 +10,7 @@ class Mouse:
         self.plateau = plateau
         self.pos = [(self.case_number % plateau.n_cols )*size.BLOCK_SIZE + size.BLOCK_SIZE/2, (self.case_number // plateau.n_rows) *size.BLOCK_SIZE + size.BLOCK_SIZE/2]
         self.isDead = False
+        self.step = 0
         
     def move_with_keyboard(self):
         for event in pygame.event.get():
@@ -42,6 +43,7 @@ class Mouse:
         # aller en bas
         elif action == [1,0,0,0,0]:
             self.move_down()
+        self.step += 1
             
     def update_case_number(self):
         x, y = int(self.pos[1]/size.BLOCK_SIZE), int(self.pos[0]/size.BLOCK_SIZE)
