@@ -14,6 +14,10 @@ class GameEnv:
         self.plateau = Plateau(n_cols, n_rows)
         self.mouse = MouseState(0, self.plateau, vision = vision)
         self.cat = CatState( n_cols* n_rows -1, self.plateau, vision = vision)
+        self.cat_observation_space = self.cat.observation_space
+        self.cat_action_space = self.cat.action_space
+        self.mouse_observation_space = self.mouse.observation_space
+        self.mouse_action_space = self.mouse.action_space
         self.nb_step = 0
         SCREEN_SIZE = (n_cols*size.BLOCK_SIZE, n_rows*size.BLOCK_SIZE)
         self.screen =  pygame.display.set_mode(SCREEN_SIZE)
@@ -24,7 +28,17 @@ class GameEnv:
     def reset(self):
         self.mouse = MouseState(0, self.plateau)
         self.cat = CatState( self.n_cols* self.n_rows -1, self.plateau)
-        return self.cat.get_state(), self.mouse.get_state()
+        return self.cat.get_state(self.mouse), self.mouse.get_state(self.cat)
+    
+    def reset_cat(self):
+        self.mouse = MouseState(0, self.plateau)
+        self.cat = CatState( self.n_cols* self.n_rows -1, self.plateau)
+        return self.cat.get_state(self.mouse)
+    
+    def reset_mouse(self):
+        self.mouse = MouseState(0, self.plateau)
+        self.cat = CatState( self.n_cols* self.n_rows -1, self.plateau)
+        return self.mouse.get_state(self.cat)
     
     def draw(self):
         self.plateau.draw_plateau(self.screen) 
@@ -33,35 +47,34 @@ class GameEnv:
         pygame.display.update()
 
     # Step the environment by taking an action
-    def step(self):
-        if self.nb_step % 2 == 0:
-            self.nb_step += 1
-            next_state_cat = self.cat.take_action(self.mouse)
-            done = self.cat.is_done(self.mouse)
-            reward = self.cat.get_reward(self.mouse)
-            self.cat_state = next_state_cat
-            return next_state_cat, reward, done, {}
-        else :
-            self.nb_step += 1
-            next_state_mouse = self.mouse.take_action(self.cat)
-            done = self.mouse.is_done(self.cat)
-            reward = self.mouse.get_reward(self.cat)
-            self.mouse_state = next_state_mouse
-            return next_state_mouse, reward, done, {}
-        
-        
-if __name__ == '__main__':
-    game = GameEnv(10, 10)
+    def cat_step(self, action):
+        self.nb_step += 1
+        next_state_cat = self.cat.take_action(self.mouse)
+        done = self.cat.is_done(self.mouse)
+        reward = self.cat.get_reward(self.mouse)
+        self.cat_state = next_state_cat
+        return next_state_cat, reward, done, {}
     
-    #game loop
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                break
+    def mouse_step(self, action):
+        next_state_mouse = self.mouse.take_action(self.cat)
+        done = self.mouse.is_done(self.cat)
+        reward = self.mouse.get_reward(self.cat)
+        self.mouse_state = next_state_mouse
+        return next_state_mouse, reward, done, {}
+        
+        
+# if __name__ == '__main__':
+#     game = GameEnv(6, 6)
+    
+#     #game loop
+#     while True:
+#         for event in pygame.event.get():
+#             if event.type == pygame.QUIT:
+#                 break
 
-        next_state, reward, game_over, dic = game.step()
-        game.draw()
-    #   
-        if game_over == True:
-            break     
-    pygame.quit()
+#         next_state, reward, game_over, dic = game.step()
+#         game.draw()
+#     #   
+#         if game_over == True:
+#             break     
+#     pygame.quit()

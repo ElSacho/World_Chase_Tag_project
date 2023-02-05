@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 from collections import namedtuple
 import numpy as np
-
+from catState import CatState
+from gameEnv import GameEnv
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import torch.nn.functional as F
 
 
 HIDDEN_SIZE = 128
 BATCH_SIZE = 16
 PERCENTILE = 70
-
 
 class Net(nn.Module):
     def __init__(self, obs_size, hidden_size, n_actions):
@@ -22,9 +23,17 @@ class Net(nn.Module):
         )
 
     def forward(self, x):
-        return self.net(x)
-
-
+        x = self.net(x)
+        F.softmax(x, dim=1)
+        return F.softmax(x, dim=1)
+    
+class CatAgent(CatState):
+    def __init__(self, hidden_size):
+        super().__init__()
+        self.net = Net(self.observation_space,  hidden_size, self.action_space)
+        self.reward = 0
+        
+    
 Episode = namedtuple('Episode', field_names=['reward', 'steps'])
 EpisodeStep = namedtuple('EpisodeStep', field_names=['observation', 'action'])
 
@@ -33,23 +42,24 @@ def iterate_batches(env, net, batch_size):
     batch = []
     episode_reward = 0.0
     episode_steps = []
-    obs = env.reset()
+    obs = env.reset_cat()
     sm = nn.Softmax(dim=1)
     while True:
         obs_v = torch.FloatTensor([obs])
         act_probs_v = sm(net(obs_v))
         act_probs = act_probs_v.data.numpy()[0]
         action = np.random.choice(len(act_probs), p=act_probs)
-        next_obs, reward, is_done, _ = env.step(action)
+        next_obs, reward, is_done, _ = env.cat_step(action)
         episode_reward += reward
         step = EpisodeStep(observation=obs, action=action)
         episode_steps.append(step)
+        env.draw()
         if is_done:
             e = Episode(reward=episode_reward, steps=episode_steps)
             batch.append(e)
             episode_reward = 0.0
             episode_steps = []
-            next_obs = env.reset()
+            next_obs = env.reset_cat()
             if len(batch) == batch_size:
                 yield batch
                 batch = []
@@ -75,31 +85,25 @@ def filter_batch(batch, percentile):
 
 
 if __name__ == "__main__":
-    env = gym.make("CartPole-v0")
+    env = GameEnv(5,5)
     # env = gym.wrappers.Monitor(env, directory="mon", force=True)
-    obs_size = env.observation_space.shape[0]
-    n_actions = env.action_space.n
+    cat_obs_size = env.cat_observation_space
+    cat_n_actions = env.cat_action_space
 
-    net = Net(obs_size, HIDDEN_SIZE, n_actions)
+    cat_net = Net(cat_obs_size, HIDDEN_SIZE, cat_n_actions)
     objective = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(params=net.parameters(), lr=0.01)
-    writer = SummaryWriter(comment="-cartpole")
+    optimizer = optim.Adam(params=cat_net.parameters(), lr=0.01)
 
     for iter_no, batch in enumerate(iterate_batches(
-            env, net, BATCH_SIZE)):
-        obs_v, acts_v, reward_b, reward_m = \
-            filter_batch(batch, PERCENTILE)
+            env, cat_net, BATCH_SIZE)):
+        obs_v, acts_v, reward_b, reward_m = filter_batch(batch, PERCENTILE)
         optimizer.zero_grad()
-        action_scores_v = net(obs_v)
+        action_scores_v = cat_net(obs_v)
         loss_v = objective(action_scores_v, acts_v)
         loss_v.backward()
         optimizer.step()
         print("%d: loss=%.3f, reward_mean=%.1f, rw_bound=%.1f" % (
             iter_no, loss_v.item(), reward_m, reward_b))
-        writer.add_scalar("loss", loss_v.item(), iter_no)
-        writer.add_scalar("reward_bound", reward_b, iter_no)
-        writer.add_scalar("reward_mean", reward_m, iter_no)
         if reward_m > 199:
             print("Solved!")
             break
-    writer.close()

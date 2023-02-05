@@ -30,6 +30,7 @@ class MouseState(Mouse):
         # print([self.view[i:i+2*self.vision+1] for i in range(0, (2*self.vision+1)**2, 2*self.vision+1)])
         self.view.append(pos[0]-pos_cat[0])
         self.view.append(pos[1]-pos_cat[1])
+        return(self.view)
         
                      
     def pos_isValid(self, pos):
