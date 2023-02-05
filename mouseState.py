@@ -48,11 +48,16 @@ class MouseState(Mouse):
     def get_reward(self, cat):
         pos = int(self.pos[1]/size.BLOCK_SIZE), int(self.pos[0]/size.BLOCK_SIZE)
         pos_cat = int(cat.pos[1]/size.BLOCK_SIZE), int(cat.pos[0]/size.BLOCK_SIZE)
-        return (pos[0]+pos_cat[0])**2+(pos[1]+pos_cat[1])**2
+        position = (pos[0]+pos_cat[0])**2+(pos[1]+pos_cat[1])**2
+        return math.log(0.1+position)
     
+    def get_actions(self):
+            return [[1, 0, 0, 0, 0], [0, 1, 0, 0, 0], [0, 0, 1, 0, 0], [0, 0, 0, 1, 0], [0, 0, 0, 0, 1]]
+
     # Take an action and return the next state of the game
-    def take_action(self , cat):
-        action = [0] * 5
-        action[random.randint(0, 4)] = 1
+    def take_action(self , number_action, cat):
+        # action = [0] * 5
+        # action[random.randint(0, 4)] = 1
+        action = self.get_actions()[number_action]
         self.move(action)
         return self.get_state(cat)

@@ -85,12 +85,15 @@ def filter_batch(batch, percentile):
 
 
 if __name__ == "__main__":
-    env = GameEnv(5,5, vision = 0)
+    env = GameEnv(25,25, vision = 0)
     # env = gym.wrappers.Monitor(env, directory="mon", force=True)
     cat_obs_size = env.cat_observation_space
     cat_n_actions = env.cat_action_space
 
     cat_net = Net(cat_obs_size, HIDDEN_SIZE, cat_n_actions)
+    
+    save_path = "model.pt"
+    cat_net.load_state_dict(torch.load(save_path))
     objective = nn.CrossEntropyLoss()
     optimizer = optim.Adam(params=cat_net.parameters(), lr=0.01)
 
@@ -103,6 +106,6 @@ if __name__ == "__main__":
         optimizer.step()
         print("%d: loss=%.3f, reward_mean=%.1f, rw_bound=%.1f" % (
             iter_no, loss_v.item(), reward_m, reward_b))
-        if reward_m > 199:
-            print("Solved!")
-            break
+        # Sauvegardez le modèle
+        torch.save(cat_net.state_dict(), save_path)
+        

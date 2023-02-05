@@ -57,7 +57,7 @@ class GameEnv:
         return next_state_cat, reward, done, {}
     
     def mouse_step(self, action):
-        next_state_mouse = self.mouse.take_action(self.cat)
+        next_state_mouse = self.mouse.take_action(action, self.cat)
         done = self.mouse.is_done(self.cat)
         reward = self.mouse.get_reward(self.cat)
         self.mouse_state = next_state_mouse

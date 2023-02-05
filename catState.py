@@ -52,7 +52,7 @@ class CatState(Cat):
         if distance == 1:
             reward = 0
         if distance == 0:
-            reward = 20/self.step
+            reward = 100/self.step
         if distance > self.vision :
             reward = 0
         return reward
