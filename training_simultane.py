@@ -111,7 +111,10 @@ def filter_batch(batch, percentile):
 
 
 if __name__ == "__main__":
-    env = GameEnv(20,20, vision = 0)
+    env = GameEnv(5,5, vision = 2)
+    
+    save_path = "cat_model.pt"
+    
     # env = gym.wrappers.Monitor(env, directory="mon", force=True)
     cat_obs_size = env.cat_observation_space
     cat_n_actions = env.cat_action_space
@@ -147,7 +150,5 @@ if __name__ == "__main__":
         optimizer_mouse.step()
         print("%d: loss_mouse=%.3f, reward_mean_mouse=%.1f, rw_bound_mouse=%.1f" % (
             iter_no, loss_v_mouse.item(), reward_m_mouse, reward_b_mouse))
+        torch.save(cat_net.state_dict(), save_path)
         
-        if reward_m > 199:
-            print("Solved!")
-            break

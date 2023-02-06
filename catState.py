@@ -23,7 +23,11 @@ class CatState(Cat):
             for y in range(pos[1]-self.vision, pos[1]+self.vision+1):
                 if self.pos_isValid([x,y]):
                     case_number = x*self.plateau.n_cols + y
-                    self.view.append(self.plateau.cases[case_number].timeToSpend)
+                    case_number_mouse = mouse.case_number
+                    if case_number == case_number_mouse:
+                        self.view.append(10)
+                    else :
+                        self.view.append(self.plateau.cases[case_number].timeToSpend)
                 else :
                     self.view.append(-1)
         pos_mouse = int(mouse.pos[1]/size.BLOCK_SIZE), int(mouse.pos[0]/size.BLOCK_SIZE)

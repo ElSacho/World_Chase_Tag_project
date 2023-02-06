@@ -27,12 +27,14 @@ class Case:
 class Plateau:
     def __init__(self, n_cols, n_rows, cases_to_spend_time = [1,2]):
         cases_to_spend_time = random.sample(range(n_cols*n_rows-1), int(n_cols*n_rows*0.1))
+        cases_to_spend_time = None
         self.n_cols = n_cols
         self.n_rows = n_rows
         self.cases = []
         for i in range(n_cols*n_rows):
             self.cases.append(Case(i, n_cols, n_rows))
-        self.timeToSpend(cases_to_spend_time)
+        if cases_to_spend_time != None:
+            self.timeToSpend(cases_to_spend_time)
             
     def timeToSpend(self, tab_cases_concerned):
         for i in tab_cases_concerned:

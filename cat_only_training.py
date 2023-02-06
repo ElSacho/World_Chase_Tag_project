@@ -49,6 +49,7 @@ def iterate_batches(env, net, batch_size):
         act_probs_v = sm(net(obs_v))
         act_probs = act_probs_v.data.numpy()[0]
         action = np.random.choice(len(act_probs), p=act_probs)
+        # action = np.argmax(act_probs)
         next_obs, reward, is_done, _ = env.cat_step(action)
         episode_reward += reward
         step = EpisodeStep(observation=obs, action=action)
@@ -85,14 +86,14 @@ def filter_batch(batch, percentile):
 
 
 if __name__ == "__main__":
-    env = GameEnv(25,25, vision = 0)
+    env = GameEnv(5,5, vision = 2)
     # env = gym.wrappers.Monitor(env, directory="mon", force=True)
     cat_obs_size = env.cat_observation_space
     cat_n_actions = env.cat_action_space
 
     cat_net = Net(cat_obs_size, HIDDEN_SIZE, cat_n_actions)
     
-    save_path = "model.pt"
+    save_path = "cat_model.pt"
     cat_net.load_state_dict(torch.load(save_path))
     objective = nn.CrossEntropyLoss()
     optimizer = optim.Adam(params=cat_net.parameters(), lr=0.01)
