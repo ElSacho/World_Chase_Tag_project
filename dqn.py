@@ -115,6 +115,7 @@ def calc_loss(batch, net, tgt_net, device="cpu"):
     state_action_values = net(states_v).gather(
         1, actions_v.unsqueeze(-1)).squeeze(-1)
     with torch.no_grad():
+        next_states_v = next_states_v.float()
         next_state_values = tgt_net(next_states_v).max(1)[0]
         next_state_values[done_mask] = 0.0
         next_state_values = next_state_values.detach()
