@@ -63,7 +63,7 @@ class CatState(Cat):
 
     # Get all possible actions for the current state
     def get_actions(self):
-        return [[1, 0, 0, 0, 0], [0, 1, 0, 0, 0], [0, 0, 1, 0, 0], [0, 0, 0, 1, 0], [0, 0, 0, 0, 1]]
+        return [ [0, 1, 0, 0, 0], [0, 0, 1, 0, 0], [0, 0, 0, 1, 0], [0, 0, 0, 0, 1],[1, 0, 0, 0, 0]]
 
     # Take an action and return the next state of the game
     def take_action(self , number_action, mouse):

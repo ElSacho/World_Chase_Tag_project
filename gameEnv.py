@@ -5,6 +5,7 @@ import pygame
 from utils import colors, size
 from mouseState import MouseState
 from catState import CatState
+import random 
 
 # Define the environment class
 class GameEnv:
@@ -15,8 +16,11 @@ class GameEnv:
         self.n_rows = n_rows
         self.vision = vision
         self.plateau = Plateau(n_cols, n_rows)
-        self.mouse = MouseState(0, self.plateau, vision = vision)
-        self.cat = CatState( n_cols* n_rows -1, self.plateau, vision = vision)
+        pos = random.sample(range(10), 2)
+        self.mouse = MouseState(pos[0], self.plateau, vision = vision)
+        self.cat = CatState( pos[1], self.plateau, vision = vision)
+        # self.mouse = MouseState(0, self.plateau, vision = vision)
+        # self.cat = CatState( n_cols* n_rows -1, self.plateau, vision = vision)
         self.cat_observation_space = self.cat.observation_space
         self.cat_action_space = self.cat.action_space
         self.mouse_observation_space = self.mouse.observation_space
@@ -34,8 +38,9 @@ class GameEnv:
         return self.cat.get_state(self.mouse), self.mouse.get_state(self.cat)
     
     def reset_cat(self):
-        self.mouse = MouseState(0, self.plateau, vision = self.vision)
-        self.cat = CatState( self.n_cols* self.n_rows -1, self.plateau, vision = self.vision)
+        pos = random.sample(range(10), 2)
+        self.mouse = MouseState(pos[0], self.plateau, vision = self.vision)
+        self.cat = CatState( pos[1], self.plateau, vision = self.vision)
         return self.cat.get_state(self.mouse)
     
     def reset_mouse(self):

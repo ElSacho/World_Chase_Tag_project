@@ -87,7 +87,7 @@ def filter_batch(batch, percentile):
 
 
 if __name__ == "__main__":
-    env = GameEnv(5,5, vision = 2, method = "speed")
+    env = GameEnv(5,5, vision = 2, method = "human")
     # env = gym.wrappers.Monitor(env, directory="mon", force=True)
     cat_obs_size = env.cat_observation_space
     cat_n_actions = env.cat_action_space
