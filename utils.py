@@ -10,3 +10,4 @@ class colors:
 class size:
     BLOCK_SIZE = 50
     CONTOUR_SIZE = 1
+    SPEED = 10

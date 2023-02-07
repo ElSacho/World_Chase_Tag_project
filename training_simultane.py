@@ -63,7 +63,8 @@ def iterate_batches(env, cat_net, mouse_net, batch_size):
         obs_v_mouse = torch.FloatTensor([obs_mouse])
         act_probs_v_mouse = sm(mouse_net(obs_v_mouse))
         act_probs_mouse = act_probs_v_mouse.data.numpy()[0]
-        action_mouse = np.random.choice(len(act_probs_mouse), p=act_probs_mouse)
+        action_mouse = np.argmax(act_probs_mouse)
+        # action_mouse = np.random.choice(len(act_probs_mouse), p=act_probs_mouse)
         next_obs_mouse, reward_mouse, is_done_mouse, _ = env.mouse_step(action_mouse)
         episode_reward_mouse += reward_mouse
         mouse_step = EpisodeStep(observation=obs_mouse, action=action_mouse)
@@ -111,7 +112,7 @@ def filter_batch(batch, percentile):
 
 
 if __name__ == "__main__":
-    env = GameEnv(5,5, vision = 2)
+    env = GameEnv(5,5, vision = 2, method = 'human')
     
     save_path = "cat_model.pt"
     
@@ -121,8 +122,9 @@ if __name__ == "__main__":
 
     cat_net = Net(cat_obs_size, HIDDEN_SIZE, cat_n_actions)
     mouse_net = Net(cat_obs_size, HIDDEN_SIZE, cat_n_actions)
-    # save_path = "model.pt"
-    # cat_net.load_state_dict(torch.load(save_path))
+    mouse_save_path = "model_mouse.pt"
+    cat_net.load_state_dict(torch.load(save_path))
+    mouse_net.load_state_dict(torch.load(mouse_save_path))
     
     objective = nn.CrossEntropyLoss()
     optimizer = optim.Adam(params=cat_net.parameters(), lr=0.01)
@@ -150,5 +152,5 @@ if __name__ == "__main__":
         optimizer_mouse.step()
         print("%d: loss_mouse=%.3f, reward_mean_mouse=%.1f, rw_bound_mouse=%.1f" % (
             iter_no, loss_v_mouse.item(), reward_m_mouse, reward_b_mouse))
-        torch.save(cat_net.state_dict(), save_path)
+        torch.save(mouse_net.state_dict(), mouse_save_path)
         

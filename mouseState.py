@@ -45,11 +45,14 @@ class MouseState(Mouse):
         return cat.hasEaten(self)
 
     # Get the reward for the current state
-    def get_reward(self, cat):
-        pos = int(self.pos[1]/size.BLOCK_SIZE), int(self.pos[0]/size.BLOCK_SIZE)
-        pos_cat = int(cat.pos[1]/size.BLOCK_SIZE), int(cat.pos[0]/size.BLOCK_SIZE)
-        position = (pos[0]+pos_cat[0])**2+(pos[1]+pos_cat[1])**2
-        return math.log(0.1+position)
+    def get_reward(self, cat, method = "simple"):
+        if method == 'simple':
+            return 1
+        elif method == 'with_position':
+            pos = int(self.pos[1]/size.BLOCK_SIZE), int(self.pos[0]/size.BLOCK_SIZE)
+            pos_cat = int(cat.pos[1]/size.BLOCK_SIZE), int(cat.pos[0]/size.BLOCK_SIZE)
+            position = (pos[0]-pos_cat[0])**2+(pos[1]-pos_cat[1])**2
+            return math.log(0.1+position)
     
     def get_actions(self):
             return [[1, 0, 0, 0, 0], [0, 1, 0, 0, 0], [0, 0, 1, 0, 0], [0, 0, 0, 1, 0], [0, 0, 0, 0, 1]]

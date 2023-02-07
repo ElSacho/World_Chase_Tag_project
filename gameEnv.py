@@ -8,8 +8,10 @@ from catState import CatState
 
 # Define the environment class
 class GameEnv:
-    def __init__(self, n_cols, n_rows, vision = 2):
+    def __init__(self, n_cols, n_rows, vision = 2, method = 'speed'):
+        self.method = method
         self.n_cols = n_cols
+        self.clock = pygame.time.Clock()
         self.n_rows = n_rows
         self.vision = vision
         self.plateau = Plateau(n_cols, n_rows)
@@ -42,10 +44,18 @@ class GameEnv:
         return self.mouse.get_state(self.cat)
     
     def draw(self):
-        self.plateau.draw_plateau(self.screen) 
-        self.cat.draw_cat(self.screen)
-        self.mouse.draw_mouse(self.screen)
-        pygame.display.update()
+        if self.method == 'speed':
+            self.plateau.draw_plateau(self.screen) 
+            self.cat.draw_cat(self.screen)
+            self.mouse.draw_mouse(self.screen)
+            pygame.display.update()
+        elif self.method == 'human':
+            self.plateau.draw_plateau(self.screen) 
+            self.cat.draw_cat(self.screen)
+            self.mouse.draw_mouse(self.screen)
+            pygame.display.update()
+            self.clock.tick(size.SPEED)
+            
 
     # Step the environment by taking an action
     def cat_step(self, action):
