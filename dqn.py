@@ -22,7 +22,7 @@ from gameEnv import GameEnv
 
 
 DEFAULT_ENV_NAME = "PongNoFrameskip-v4"
-MEAN_REWARD_BOUND = 19
+MEAN_REWARD_BOUND = 500
 
 GAMMA = 0.99
 BATCH_SIZE = 32
@@ -32,9 +32,9 @@ SYNC_TARGET_FRAMES = 1000
 REPLAY_START_SIZE = 10000
 HIDDEN_SIZE = 128
 
-EPSILON_DECAY_LAST_FRAME = 150000
+EPSILON_DECAY_LAST_FRAME = 300000
 EPSILON_START = 1.0
-EPSILON_FINAL = 0.01
+EPSILON_FINAL = 0.03
 
 
 Experience = collections.namedtuple(
@@ -76,7 +76,6 @@ class Agent:
     @torch.no_grad()
     def play_step(self, net, epsilon=0.0, device="cpu"):
         done_reward = None
-
         if np.random.random() < epsilon:
             action = random.randint(0, self.env.cat_action_space-1)
         else:
@@ -91,8 +90,7 @@ class Agent:
         new_state, reward, is_done, _ = self.env.cat_step(action)
         self.total_reward += reward
 
-        exp = Experience(self.state, action, reward,
-                         is_done, new_state)
+        exp = Experience(self.state, action, reward, is_done, new_state)
         self.exp_buffer.append(exp)
         self.state = new_state
         if is_done:
@@ -132,15 +130,28 @@ if __name__ == "__main__":
     parser.add_argument("--env", default=DEFAULT_ENV_NAME,
                         help="Name of the environment, default=" +
                              DEFAULT_ENV_NAME)
+    # parser.add_argument("-m", "--model1", required=False, default="PongNoFrameskip-v4-best_12.dat",
+    #                     help="Model file to load")
+    # parser.add_argument("-m2", "--model2", required=False, default="PongNoFrameskip-v4-best_11.dat",
+    #                     help="Model file to load")
     args = parser.parse_args()
     device = torch.device("cuda" if args.cuda else "cpu")
 
-    env = GameEnv(5,5, vision = 0, method = "speed")
+    env = GameEnv(5,5, vision = 1, method = "speed")
 
     net = dqn_model.DQN(env.cat_observation_space, HIDDEN_SIZE,
                         env.cat_action_space).to(device)
+    
+    # state = torch.load(args.model1, map_location=lambda stg, _: stg)
+    
+    # net.load_state_dict(state)
+    
     tgt_net = dqn_model.DQN(env.cat_observation_space, HIDDEN_SIZE,
                         env.cat_action_space).to(device)
+    
+    # state2 = torch.load(args.model2, map_location=lambda stg, _: stg)
+    
+    # tgt_net.load_state_dict(state2)
     # writer = SummaryWriter(comment="-" + args.env)
     # print(net)
 

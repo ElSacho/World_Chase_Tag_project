@@ -20,7 +20,7 @@ DRAW = True
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-m", "--model", required=True, default="PongNoFrameskip-v4-best_11.dat",
+    parser.add_argument("-m", "--model", required=False, default="PongNoFrameskip-v4-best_8.dat",
                         help="Model file to load")
     # parser.add_argument("-e", "--env", default=DEFAULT_ENV_NAME,
     #                     help="Environment name to use, default=" +
@@ -32,7 +32,7 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
 
-    env = GameEnv(5,5, vision = 0, method = "human")
+    env = GameEnv(5,5, vision = 1, method = "human")
     
     net = dqn_model.DQN(env.cat_observation_space, HIDDEN_SIZE,
                         env.cat_action_space)
@@ -46,9 +46,6 @@ if __name__ == "__main__":
         state = env.reset_cat()
         total_reward = 0.0
         c = collections.Counter()
-
-
-    
         while True:
             start_ts = time.time()
             if DRAW:

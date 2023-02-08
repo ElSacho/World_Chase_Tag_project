@@ -74,29 +74,6 @@ class Cat:
             self.pos[0] -= lenght_mouvement * size.BLOCK_SIZE
             self.update_case_number()
              
-    def analyse_ralentisseur(self):
-        print(self.time_to_spend_on_ralentisseur)
-        print(f'case : {self.plateau.cases[self.case_number].timeToSpend}')
-        # Si on est sur une case classique, il ne se passe rien, on est pas sur un ralentisseur
-        if self.plateau.cases[self.case_number].timeToSpend == 0:
-            self.isOnRalentisseur = False
-            return 0
-        # Sinon si on est sur une case ralentisseur mais qu'on ne doit plus attendre, on avance 
-        elif self.time_to_spend_on_ralentisseur == 0 and self.isOnRalentisseur:
-            self.isOnRalentisseur = False
-            return 0
-        # Sinon si on vient d'arriver sur une case ralentisseur, on met a jour le temps d'attente et l etat du chat
-        elif self.plateau.cases[self.case_number].timeToSpend !=0 and not self.isOnRalentisseur:
-            self.isOnRalentisseur = True
-            self.time_to_spend_on_ralentisseur = self.plateau.cases[self.case_number].timeToSpend
-            print(f"time : {self.time_to_spend_on_ralentisseur}")
-        # Sinon on est juste en attente et on reste la un tempo de plus
-        else : 
-            self.time_to_spend_on_ralentisseur -= 1
-        print(self.time_to_spend_on_ralentisseur)
-        # On renvoie le temps d'attente final
-        return self.time_to_spend_on_ralentisseur
-            
     def hasEaten(self, mouse):
         if self.case_number == mouse.case_number:
             self.MouseIsDead = True

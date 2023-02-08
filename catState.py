@@ -8,12 +8,13 @@ import random
 
 
 class CatState(Cat):
-    def __init__(self, starting_position, plateau, vision = 2):
+    def __init__(self, starting_position, plateau, vision):
         super().__init__(starting_position, plateau)
         self.vision = vision
+        self.position_ini = [(starting_position % plateau.n_cols ), (starting_position // plateau.n_rows)]
         # La vision plus l'ecart de position avec le chasseur
         self.observation_space = (2*vision+1)**2+2
-        self.action_space = 5
+        self.action_space = 4
             
     # Get current state of the game  
     def get_state(self, mouse):
@@ -45,25 +46,24 @@ class CatState(Cat):
   
     # Check if the game is finished
     def is_done(self, mouse):
-        return self.hasEaten(mouse)
+        return self.hasEaten(mouse) or self.step > 5*(self.plateau.n_cols * self.plateau.n_rows)
+    
     # Get the reward for the current state
     def get_reward(self, mouse):
         pos = int(self.pos[1]/size.BLOCK_SIZE), int(self.pos[0]/size.BLOCK_SIZE)
         pos_mouse = int(mouse.pos[1]/size.BLOCK_SIZE), int(mouse.pos[0]/size.BLOCK_SIZE)
         distance = (pos[0]+pos_mouse[0])**2+(pos[1]+pos_mouse[1])**2
-        if distance <= self.vision:
-            reward = 0
-        if distance == 1:
-            reward = 0
+        reward = 0
         if distance == 0:
-            reward = 100/self.step
-        if distance > self.vision :
-            reward = 0
+            distance_min = abs(self.position_ini[0]-mouse.position_ini[0])+abs(self.position_ini[1]-mouse.position_ini[1])
+            reward = 100 / self.step * distance_min
+        if self.step > 4*(self.plateau.n_cols + self.plateau.n_rows):
+            reward = -1
         return reward
 
     # Get all possible actions for the current state
     def get_actions(self):
-        return [ [0, 1, 0, 0, 0], [0, 0, 1, 0, 0], [0, 0, 0, 1, 0], [0, 0, 0, 0, 1],[1, 0, 0, 0, 0]]
+        return [ [0, 1, 0, 0, 0], [0, 0, 1, 0, 0], [0, 0, 0, 1, 0], [1, 0, 0, 0, 0]]
 
     # Take an action and return the next state of the game
     def take_action(self , number_action, mouse):

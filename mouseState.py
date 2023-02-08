@@ -11,6 +11,7 @@ class MouseState(Mouse):
     def __init__(self, starting_position, plateau, vision = 1):
         super().__init__(starting_position, plateau)
         self.vision = vision
+        self.position_ini = [(starting_position % plateau.n_cols ), (starting_position // plateau.n_rows)]
         # La vision plus l'ecart de position avec le chasseur
         self.observation_space = (2*vision+1)**2+2
         self.action_space = 5

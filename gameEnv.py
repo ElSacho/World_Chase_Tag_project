@@ -16,9 +16,9 @@ class GameEnv:
         self.n_rows = n_rows
         self.vision = vision
         self.plateau = Plateau(n_cols, n_rows)
-        pos = random.sample(range(10), 2)
-        self.mouse = MouseState(pos[0], self.plateau, vision = vision)
-        self.cat = CatState( pos[1], self.plateau, vision = vision)
+        pos = random.sample(range(n_cols * n_rows), 2)
+        self.mouse = MouseState(pos[0], self.plateau, vision)
+        self.cat = CatState( pos[1], self.plateau, vision)
         # self.mouse = MouseState(0, self.plateau, vision = vision)
         # self.cat = CatState( n_cols* n_rows -1, self.plateau, vision = vision)
         self.cat_observation_space = self.cat.observation_space
@@ -31,16 +31,11 @@ class GameEnv:
         #self.screen = pygame.display.set_mode((n_cols*size.BLOCK_SIZE, n_rows*size.BLOCK_SIZE))
         pygame.display.set_caption('Chase Tag')
     
-    # Reset the environment to its initial state
-    def reset(self):
-        self.mouse = MouseState(0, self.plateau, vision = self.vision)
-        self.cat = CatState( self.n_cols* self.n_rows -1, self.plateau, vision = self.vision)
-        return self.cat.get_state(self.mouse), self.mouse.get_state(self.cat)
-    
     def reset_cat(self):
-        pos = random.sample(range(10), 2)
-        self.mouse = MouseState(pos[0], self.plateau, vision = self.vision)
-        self.cat = CatState( pos[1], self.plateau, vision = self.vision)
+        # pos = random.sample(range(10), 2)
+        case_number_ini = random.sample(range(self.n_cols * self.n_rows), 2)
+        self.mouse = MouseState(case_number_ini[0], self.plateau, vision = self.vision)
+        self.cat = CatState( case_number_ini[1], self.plateau, vision = self.vision)
         return self.cat.get_state(self.mouse)
     
     def reset_mouse(self):
