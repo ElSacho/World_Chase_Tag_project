@@ -49,6 +49,9 @@ class GameEnv:
         self.cat = CatState( self.n_cols* self.n_rows -1, self.plateau, vision = self.vision)
         return self.mouse.get_state(self.cat)
     
+    def get_state_mouse(self):
+        return self.mouse.get_state(self.cat)
+    
     def draw(self):
         if self.method == 'speed':
             self.plateau.draw_plateau(self.screen) 

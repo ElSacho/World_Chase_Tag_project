@@ -14,7 +14,7 @@ class MouseState(Mouse):
         self.position_ini = [(starting_position % plateau.n_cols ), (starting_position // plateau.n_rows)]
         # La vision plus l'ecart de position avec le chasseur
         self.observation_space = (2*vision+1)**2+2
-        self.action_space = 5
+        self.action_space = 4
       
     # Get current state of the game  
     def get_state(self, cat):
@@ -46,17 +46,17 @@ class MouseState(Mouse):
         return cat.hasEaten(self)
 
     # Get the reward for the current state
-    def get_reward(self, cat, method = "simple"):
+    def get_reward(self, cat, method = "with_position"):
         if method == 'simple':
             return 1
         elif method == 'with_position':
             pos = int(self.pos[1]/size.BLOCK_SIZE), int(self.pos[0]/size.BLOCK_SIZE)
             pos_cat = int(cat.pos[1]/size.BLOCK_SIZE), int(cat.pos[0]/size.BLOCK_SIZE)
-            position = (pos[0]-pos_cat[0])**2+(pos[1]-pos_cat[1])**2
+            position = abs(pos[0]-pos_cat[0])+abs(pos[1]-pos_cat[1])
             return math.log(0.1+position)
     
     def get_actions(self):
-            return [[1, 0, 0, 0, 0], [0, 1, 0, 0, 0], [0, 0, 1, 0, 0], [0, 0, 0, 1, 0], [0, 0, 0, 0, 1]]
+            return [[1, 0, 0, 0, 0], [0, 1, 0, 0, 0], [0, 0, 1, 0, 0], [0, 0, 0, 1, 0]]
 
     # Take an action and return the next state of the game
     def take_action(self , number_action, cat):
