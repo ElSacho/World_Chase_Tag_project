@@ -64,7 +64,7 @@ if __name__ == "__main__":
     for step_idx, exp in enumerate(exp_source):
         reward_sum += exp.reward
         baseline = reward_sum / (step_idx + 1)
-        writer.add_scalar("baseline", baseline, step_idx)
+        # writer.add_scalar("baseline", baseline, step_idx)
         batch_states.append(exp.state)
         batch_actions.append(int(exp.action))
         if args.baseline:
@@ -81,9 +81,9 @@ if __name__ == "__main__":
             mean_rewards = float(np.mean(total_rewards[-100:]))
             print("%d: reward: %6.2f, mean_100: %6.2f, episodes: %d" % (
                 step_idx, reward, mean_rewards, done_episodes))
-            writer.add_scalar("reward", reward, step_idx)
-            writer.add_scalar("reward_100", mean_rewards, step_idx)
-            writer.add_scalar("episodes", done_episodes, step_idx)
+            # writer.add_scalar("reward", reward, step_idx)
+            # writer.add_scalar("reward_100", mean_rewards, step_idx)
+            # writer.add_scalar("episodes", done_episodes, step_idx)
             if mean_rewards > 195:
                 print("Solved in %d steps and %d episodes!" % (step_idx, done_episodes))
                 break
@@ -96,6 +96,7 @@ if __name__ == "__main__":
         batch_scale_v = torch.FloatTensor(batch_scales)
 
         optimizer.zero_grad()
+        states_v = states_v.float()
         logits_v = net(states_v)
         log_prob_v = F.log_softmax(logits_v, dim=1)
         log_p_a_v = log_prob_v[range(BATCH_SIZE), batch_actions_t]
@@ -116,26 +117,27 @@ if __name__ == "__main__":
         loss_v = loss_policy_v + entropy_loss_v
 
         # calc KL-div
+        states_v = states_v.float()
         new_logits_v = net(states_v)
         new_prob_v = F.softmax(new_logits_v, dim=1)
         kl_div_v = -((new_prob_v / prob_v).log() * prob_v).sum(dim=1).mean()
-        writer.add_scalar("kl", kl_div_v.item(), step_idx)
+       # writer.add_scalar("kl", kl_div_v.item(), step_idx)
 
-        writer.add_scalar("baseline", baseline, step_idx)
-        writer.add_scalar("entropy", entropy_v.item(), step_idx)
-        writer.add_scalar("batch_scales", np.mean(batch_scales), step_idx)
-        writer.add_scalar("loss_entropy", entropy_loss_v.item(), step_idx)
-        writer.add_scalar("loss_policy", loss_policy_v.item(), step_idx)
-        writer.add_scalar("loss_total", loss_v.item(), step_idx)
+        # writer.add_scalar("baseline", baseline, step_idx)
+        # writer.add_scalar("entropy", entropy_v.item(), step_idx)
+        # writer.add_scalar("batch_scales", np.mean(batch_scales), step_idx)
+        # writer.add_scalar("loss_entropy", entropy_loss_v.item(), step_idx)
+        # writer.add_scalar("loss_policy", loss_policy_v.item(), step_idx)
+        # writer.add_scalar("loss_total", loss_v.item(), step_idx)
 
         g_l2 = np.sqrt(np.mean(np.square(grads)))
         g_max = np.max(np.abs(grads))
-        writer.add_scalar("grad_l2", g_l2, step_idx)
-        writer.add_scalar("grad_max", g_max, step_idx)
-        writer.add_scalar("grad_var", np.var(grads), step_idx)
+        # writer.add_scalar("grad_l2", g_l2, step_idx)
+        # writer.add_scalar("grad_max", g_max, step_idx)
+        # writer.add_scalar("grad_var", np.var(grads), step_idx)
 
         batch_states.clear()
         batch_actions.clear()
         batch_scales.clear()
 
-    writer.close()
+    # writer.close()

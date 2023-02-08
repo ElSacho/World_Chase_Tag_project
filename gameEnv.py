@@ -6,6 +6,7 @@ from utils import colors, size
 from mouseState import MouseState
 from catState import CatState
 import random 
+import numpy as np
 
 # Define the environment class
 class GameEnv:
@@ -23,6 +24,8 @@ class GameEnv:
         # self.cat = CatState( n_cols* n_rows -1, self.plateau, vision = vision)
         self.cat_observation_space = self.cat.observation_space
         self.cat_action_space = self.cat.action_space
+        self.observation_space = self.cat.observation_space
+        self.action_space = self.cat.action_space
         self.mouse_observation_space = self.mouse.observation_space
         self.mouse_action_space = self.mouse.action_space
         self.nb_step = 0
@@ -31,6 +34,9 @@ class GameEnv:
         #self.screen = pygame.display.set_mode((n_cols*size.BLOCK_SIZE, n_rows*size.BLOCK_SIZE))
         pygame.display.set_caption('Chase Tag')
     
+    def reset(self):
+        return np.array(self.reset_cat())
+        
     def reset_cat(self):
         # pos = random.sample(range(10), 2)
         case_number_ini = random.sample(range(self.n_cols * self.n_rows), 2)
@@ -58,6 +64,9 @@ class GameEnv:
             
 
     # Step the environment by taking an action
+    def step(self, action):
+        return self.cat_step( action)
+    
     def cat_step(self, action):
         self.nb_step += 1
         next_state_cat = self.cat.take_action(action, self.mouse)

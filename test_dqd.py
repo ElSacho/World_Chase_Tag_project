@@ -20,7 +20,7 @@ DRAW = True
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-m", "--model", required=False, default="PongNoFrameskip-v4-best_8.dat",
+    parser.add_argument("-m", "--model", required=False, default="PongNoFrameskip-v4-best_91.dat",
                         help="Model file to load")
     # parser.add_argument("-e", "--env", default=DEFAULT_ENV_NAME,
     #                     help="Environment name to use, default=" +
