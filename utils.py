@@ -10,7 +10,7 @@ class colors:
 class size:
     BLOCK_SIZE = 50
     CONTOUR_SIZE = 1
-    SPEED = 100
+    SPEED = 5
     
 def distance_between(a,b, rows, cols):
     return abs(a[0]-b[0])/rows + abs(b[1]-a[1])/cols

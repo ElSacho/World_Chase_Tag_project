@@ -45,8 +45,9 @@ class GameEnv:
         return self.cat.get_state(self.mouse)
     
     def reset_mouse(self):
-        self.mouse = MouseState(0, self.plateau, vision = self.vision)
-        self.cat = CatState( self.n_cols* self.n_rows -1, self.plateau, vision = self.vision)
+        case_number_ini = random.sample(range(self.n_cols * self.n_rows), 2)
+        self.mouse = MouseState(case_number_ini[0], self.plateau, vision = self.vision)
+        self.cat = CatState( case_number_ini[1], self.plateau, vision = self.vision)
         return self.mouse.get_state(self.cat)
     
     def get_state_mouse(self):

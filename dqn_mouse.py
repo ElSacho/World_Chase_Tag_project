@@ -17,12 +17,13 @@ import torch.optim as optim
 import collections
 import numpy as np
 from catState import CatState
+from mouseState import MouseState
 from gameEnv import GameEnv
 
 
 
 DEFAULT_ENV_NAME = "Cahse_tag"
-MEAN_REWARD_BOUND = 100
+MEAN_REWARD_BOUND = 100000
 
 GAMMA = 0.99
 BATCH_SIZE = 32
@@ -32,7 +33,7 @@ SYNC_TARGET_FRAMES = 1000
 REPLAY_START_SIZE = 10000
 HIDDEN_SIZE = 128
 
-EPSILON_DECAY_LAST_FRAME = 300000
+EPSILON_DECAY_LAST_FRAME = 150000
 EPSILON_START = 1.0
 EPSILON_FINAL = 0.03
 
@@ -98,7 +99,7 @@ class CatAgent:
             self._reset()
         return done_reward
 
-class MouseAgent:
+class MouseAgent(MouseState):
     def __init__(self, env, exp_buffer):
         self.env = env
         self.exp_buffer = exp_buffer
@@ -110,7 +111,6 @@ class MouseAgent:
 
     @torch.no_grad()
     def play_step(self, net, epsilon=0.0, device="cpu"):
-        global c_mouse 
         done_reward = None
         if np.random.random() < epsilon:
             action = random.randint(0, self.env.mouse_action_space-1)
@@ -215,6 +215,7 @@ if __name__ == "__main__":
     ts_frame = 0
     ts = time.time()
     best_m_reward = None
+    cat_state = env.reset_cat()
     
     c_mouse = collections.Counter()
 
@@ -224,7 +225,7 @@ if __name__ == "__main__":
         epsilon = max(EPSILON_FINAL, EPSILON_START -
                       frame_idx / EPSILON_DECAY_LAST_FRAME)
         
-        cat_state = env.reset_cat()
+       
         
         cat_state_v = torch.tensor(np.array([cat_state], copy=False))
         cat_state_v = cat_state_v.float()
@@ -253,7 +254,7 @@ if __name__ == "__main__":
             # writer.add_scalar("reward_100", m_reward, frame_idx)
             # writer.add_scalar("reward", reward, frame_idx)
             if best_m_reward is None or best_m_reward < m_reward:
-                torch.save(net.state_dict(), args.env +
+                torch.save(net.state_dict(), "model_mouse/" + args.env +
                            "-best_%.0f.dat" % m_reward)
                 if best_m_reward is not None:
                     print("Best reward updated %.3f -> %.3f" % (

@@ -5,6 +5,7 @@ import numpy as np
 import math
 from mouse import Mouse
 import random
+import collections
 
 
 class MouseState(Mouse):
@@ -15,6 +16,7 @@ class MouseState(Mouse):
         # La vision plus l'ecart de position avec le chasseur
         self.observation_space = (2*vision+1)**2+2
         self.action_space = 4
+        self.action_counter = collections.Counter()
       
     # Get current state of the game  
     def get_state(self, cat):
@@ -47,7 +49,7 @@ class MouseState(Mouse):
         return cat.hasEaten(self)
 
     # Get the reward for the current state / need to integrate the fact that it can spawn neer the cat 
-    def get_reward(self, cat, method = "reward_at_the_end"):
+    def get_reward(self, cat, method = "difference_with_cat_position"):
         if method == 'simple':
             return 1
         elif method == 'with_position':
@@ -61,9 +63,9 @@ class MouseState(Mouse):
             # print(f" last pos : {self.last_pos} and distance : {previous_distance} for {cat.pos}")
             # print(f" actual pos : {self.pos} and distance : {actual_distance} for {cat.pos}")
             if actual_distance > previous_distance:
-                return 1
-            elif actual_distance == previous_distance:
-                return 0
+                return 2
+            elif actual_distance == previous_distance: # c'est qu'on est sur un bord
+                return -1
             else : return -1
         elif method == 'reward_at_the_end':
             pos = int(self.pos[1]/size.BLOCK_SIZE), int(self.pos[0]/size.BLOCK_SIZE)
@@ -76,6 +78,8 @@ class MouseState(Mouse):
             if self.step > (self.plateau.n_cols + self.plateau.n_rows):
                 reward = 1
             return reward
+        elif method == 'opposite_cat':
+            return 1/(0.1+cat.get_reward(self)/100)
     
     def get_actions(self):
             return [[1, 0, 0, 0, 0], [0, 1, 0, 0, 0], [0, 0, 1, 0, 0], [0, 0, 0, 1, 0]]
@@ -87,4 +91,5 @@ class MouseState(Mouse):
         # number_action = 1
         action = self.get_actions()[number_action]
         self.move(action)
+        self.action_counter[number_action] += 1
         return self.get_state(cat)

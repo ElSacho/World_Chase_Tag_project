@@ -21,7 +21,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     # parser.add_argument("-mM", "--modelMouse", required=False, default="old/Cahse_tag-best_16.dat",
     #                     help="Model file to load")
-    parser.add_argument("-mM", "--modelMouse", required=False, default="old/Cahse_tag-best_4.dat",
+    parser.add_argument("-mM", "--modelMouse", required=False, default="model_mouse/Cahse_tag-best_246.dat",
                         help="Model file to load")
     parser.add_argument("-mC", "--modelCat", required=False, default="old/PongNoFrameskip-v4-best_91.dat",
                         help="Model file to load")
@@ -83,6 +83,7 @@ if __name__ == "__main__":
             mouse_state, reward, done, _ = env.mouse_step(action)
             # print(reward)
             total_reward_mouse += reward
+
             if done:
                 break
             # if args.vis:
