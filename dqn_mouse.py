@@ -110,6 +110,7 @@ class MouseAgent:
 
     @torch.no_grad()
     def play_step(self, net, epsilon=0.0, device="cpu"):
+        global c_mouse 
         done_reward = None
         if np.random.random() < epsilon:
             action = random.randint(0, self.env.mouse_action_space-1)
@@ -121,6 +122,7 @@ class MouseAgent:
             _, act_v = torch.max(q_vals_v, dim=1)
             action = int(act_v.item())
 
+        c_mouse[action] += 1
         # do step in the environment
         new_state, reward, is_done, _ = self.env.mouse_step(action)
         self.total_reward += reward
@@ -213,6 +215,8 @@ if __name__ == "__main__":
     ts_frame = 0
     ts = time.time()
     best_m_reward = None
+    
+    c_mouse = collections.Counter()
 
     while True:
         frame_idx += 1
@@ -227,9 +231,10 @@ if __name__ == "__main__":
         cat_q_vals = cat_net(cat_state_v).data.numpy()[0]
         cat_action = np.argmax(cat_q_vals)
         cat_state, _, _, _ = env.cat_step(cat_action)
+        
 
         reward = agent.play_step(net, epsilon, device=device)
-        
+
         if reward is not None:
             total_rewards.append(reward)
             speed = (frame_idx - ts_frame) / (time.time() - ts)
@@ -241,6 +246,8 @@ if __name__ == "__main__":
                 frame_idx, len(total_rewards), m_reward, epsilon,
                 speed
             ))
+            print("Action counts mouse:", c_mouse)
+            c_mouse = collections.Counter()
             # writer.add_scalar("epsilon", epsilon, frame_idx)
             # writer.add_scalar("speed", speed, frame_idx)
             # writer.add_scalar("reward_100", m_reward, frame_idx)

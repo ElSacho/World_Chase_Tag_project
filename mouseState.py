@@ -1,6 +1,6 @@
 from plateau import Plateau
 import pygame
-from utils import colors, size
+from utils import colors, size, distance_between
 import numpy as np
 import math
 from mouse import Mouse
@@ -31,9 +31,10 @@ class MouseState(Mouse):
         # print([self.view[i:i+2*self.vision+1] for i in range(0, (2*self.vision+1)**2, 2*self.vision+1)])
         self.view.append(pos[0]-pos_cat[0])
         self.view.append(pos[1]-pos_cat[1])
+        # print(self.view)
         return(self.view)
-        
-                     
+
+
     def pos_isValid(self, pos):
         if pos[0] >= self.plateau.n_cols or pos[0] < 0:
             return False
@@ -45,8 +46,8 @@ class MouseState(Mouse):
     def is_done(self, cat):
         return cat.hasEaten(self)
 
-    # Get the reward for the current state
-    def get_reward(self, cat, method = "with_position"):
+    # Get the reward for the current state / need to integrate the fact that it can spawn neer the cat 
+    def get_reward(self, cat, method = "reward_at_the_end"):
         if method == 'simple':
             return 1
         elif method == 'with_position':
@@ -54,6 +55,27 @@ class MouseState(Mouse):
             pos_cat = int(cat.pos[1]/size.BLOCK_SIZE), int(cat.pos[0]/size.BLOCK_SIZE)
             position = abs(pos[0]-pos_cat[0])+abs(pos[1]-pos_cat[1])
             return math.log(0.1+position)
+        elif method == 'difference_with_cat_position':
+            previous_distance = distance_between(self.last_pos, cat.pos, self.plateau.n_rows, self.plateau.n_cols)
+            actual_distance = distance_between(self.pos, cat.pos, self.plateau.n_rows, self.plateau.n_cols)
+            # print(f" last pos : {self.last_pos} and distance : {previous_distance} for {cat.pos}")
+            # print(f" actual pos : {self.pos} and distance : {actual_distance} for {cat.pos}")
+            if actual_distance > previous_distance:
+                return 1
+            elif actual_distance == previous_distance:
+                return 0
+            else : return -1
+        elif method == 'reward_at_the_end':
+            pos = int(self.pos[1]/size.BLOCK_SIZE), int(self.pos[0]/size.BLOCK_SIZE)
+            pos_cat = int(cat.pos[1]/size.BLOCK_SIZE), int(cat.pos[0]/size.BLOCK_SIZE)
+            distance = abs(pos[0]-pos_cat[0])+abs(pos[1]-pos_cat[1])
+            reward = 0
+            if distance == 0:
+                distance_min = abs(self.position_ini[0]-cat.position_ini[0])+abs(self.position_ini[1]-cat.position_ini[1])
+                reward = (self.step - distance_min)/distance_min
+            if self.step > (self.plateau.n_cols + self.plateau.n_rows):
+                reward = 1
+            return reward
     
     def get_actions(self):
             return [[1, 0, 0, 0, 0], [0, 1, 0, 0, 0], [0, 0, 1, 0, 0], [0, 0, 0, 1, 0]]
@@ -62,6 +84,7 @@ class MouseState(Mouse):
     def take_action(self , number_action, cat):
         # action = [0] * 5
         # action[random.randint(0, 4)] = 1
+        # number_action = 1
         action = self.get_actions()[number_action]
         self.move(action)
         return self.get_state(cat)

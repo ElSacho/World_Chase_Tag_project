@@ -11,6 +11,7 @@ class Mouse:
         self.pos = [(self.case_number % plateau.n_cols )*size.BLOCK_SIZE + size.BLOCK_SIZE/2, (self.case_number // plateau.n_rows) *size.BLOCK_SIZE + size.BLOCK_SIZE/2]
         self.isDead = False
         self.step = 0
+        self.last_pos = [(self.case_number % plateau.n_cols )*size.BLOCK_SIZE + size.BLOCK_SIZE/2, (self.case_number // plateau.n_rows) *size.BLOCK_SIZE + size.BLOCK_SIZE/2]
         
     def move_with_keyboard(self):
         for event in pygame.event.get():
@@ -28,6 +29,7 @@ class Mouse:
                     self.move([1,0,0,0,0])
            
     def move(self, action):
+        self.last_pos = self.pos.copy()
         # ne rien faire
         if action == [0,0,0,0,1]:
             pass
