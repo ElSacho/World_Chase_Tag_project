@@ -21,9 +21,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     # parser.add_argument("-mM", "--modelMouse", required=False, default="old/Cahse_tag-best_16.dat",
     #                     help="Model file to load")
-    parser.add_argument("-mM", "--modelMouse", required=False, default="model_mouse/Cahse_tag-best_246.dat",
+    parser.add_argument("-mM", "--modelMouse", required=False, default="models/mouse/Cahse_tag-best_234.dat",
                         help="Model file to load")
-    parser.add_argument("-mC", "--modelCat", required=False, default="old/PongNoFrameskip-v4-best_91.dat",
+    parser.add_argument("-mC", "--modelCat", required=False, default="models/cat/Cahse_tag-best_61.dat",
                         help="Model file to load")
     # parser.add_argument("-e", "--env", default=DEFAULT_ENV_NAME,
     #                     help="Environment name to use, default=" +
