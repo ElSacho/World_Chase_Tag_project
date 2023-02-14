@@ -25,9 +25,9 @@ class Case:
             pygame.draw.rect(screen, colors.RED, (self.pos[0]*size.BLOCK_SIZE+size.CONTOUR_SIZE, self.pos[1]*size.BLOCK_SIZE+size.CONTOUR_SIZE, size.BLOCK_SIZE-2*size.CONTOUR_SIZE, size.BLOCK_SIZE-2*size.CONTOUR_SIZE), 0)
         
 class Plateau:
-    def __init__(self, n_cols, n_rows, cases_to_spend_time = [1,2]):
-        cases_to_spend_time = random.sample(range(n_cols*n_rows-1), int(n_cols*n_rows*0.1))
-        cases_to_spend_time = None
+    def __init__(self, n_cols, n_rows, cases_to_spend_time = None):
+        random.seed(1)
+        cases_to_spend_time = random.sample(range(n_cols*n_rows-1), int(n_cols*n_rows*0.3))
         self.n_cols = n_cols
         self.n_rows = n_rows
         self.cases = []

@@ -33,8 +33,12 @@ class CatState(Cat):
                     self.view.append(-1)
         pos_mouse = int(mouse.pos[1]/size.BLOCK_SIZE), int(mouse.pos[0]/size.BLOCK_SIZE)
         # print([self.view[i:i+2*self.vision+1] for i in range(0, (2*self.vision+1)**2, 2*self.vision+1)])
-        self.view.append(pos[0]-pos_mouse[0])
-        self.view.append(pos[1]-pos_mouse[1])
+        pos_0 = pos[0]-pos_mouse[0]
+        pos_1 = pos[1]-pos_mouse[1]
+        pos_0 = np.sign(pos_0)*max(abs(pos_0), self.vision)
+        pos_1 = np.sign(pos_1)*max(abs(pos_1), self.vision)
+        self.view.append(pos_0)
+        self.view.append(pos_1)
         return np.array(self.view)
                      
     def pos_isValid(self, pos):
