@@ -37,8 +37,16 @@ EPSILON_DECAY_LAST_FRAME = 150000
 EPSILON_START = 1.0
 EPSILON_FINAL = 0.03
 
-PARTICULAR_NAME ='_just_vision'
-VISION = 3
+PARTICULAR_NAME ='_just_vision_cases_selected'
+VISION = 4
+N_ROWS = 5
+N_COLS = 5
+METHOD_TO_SPEND_TIME = None
+CASES_TO_SPEND_TIME = [0,6,12,18,24]
+METHOD_FOR_HOUSE = None
+CASE_HOUSE = None
+METHOD_FOR_WALL = None
+CASE_WALL = None
 
 
 Experience = collections.namedtuple(
@@ -181,6 +189,30 @@ if __name__ == "__main__":
         cat_folder_name = os.path.join(next_folder_name, "cat")
         os.mkdir(mouse_folder_name)
         os.mkdir(cat_folder_name)
+        
+    # Le nom du fichier de sauvegarde
+    filename = 'variables.txt'
+
+    # Le dossier dans lequel le fichier sera créé
+    directory = 'models/models' + PARTICULAR_NAME + '_{:03d}'.format(i)
+
+    # Chemin complet vers le fichier de sauvegarde
+    filepath = os.path.join(directory, filename)
+
+    # Écrire les variables dans le fichier de sauvegarde
+    with open(filepath, 'w') as f:
+        f.write('VISION={}\n'.format(VISION))
+        f.write('N_ROWS={}\n'.format(N_ROWS))
+        f.write('N_COLS={}\n'.format(N_COLS))
+        if METHOD_TO_SPEND_TIME != None:
+            f.write('METHOD_TO_SPEND_TIME="{}"\n'.format(METHOD_TO_SPEND_TIME))    
+        f.write('CASES_TO_SPEND_TIME={}\n'.format(CASES_TO_SPEND_TIME))
+        if METHOD_FOR_HOUSE != None:
+            f.write('METHOD_FOR_HOUSE="{}"\n'.format(METHOD_FOR_HOUSE))
+        f.write('CASE_HOUSE={}\n'.format(CASE_HOUSE))
+        if METHOD_FOR_WALL != None:
+            f.write('METHOD_FOR_WALL="{}"\n'.format(METHOD_FOR_WALL))
+        f.write('CASE_WALL={}\n'.format(CASE_WALL))
     
     parser.add_argument("--cuda", default=False,
                         action="store_true", help="Enable cuda")
@@ -196,7 +228,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     device = torch.device("cuda" if args.cuda else "cpu")
 
-    env = GameEnv(5,5, vision = VISION, method = "speed")
+    env = GameEnv(N_COLS, N_ROWS, vision = VISION, method = "speed", method_to_spend_time = METHOD_TO_SPEND_TIME, cases_to_spend_time = CASES_TO_SPEND_TIME, method_for_house = METHOD_FOR_HOUSE, case_house = CASE_HOUSE, method_for_wall = METHOD_FOR_WALL, case_wall = CASE_WALL)
 
     mouse_net = dqn_model.DQN(env.mouse_observation_space, HIDDEN_SIZE,
                         env.mouse_action_space).to(device)

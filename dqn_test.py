@@ -19,10 +19,16 @@ FPS = 25
 HIDDEN_SIZE = 128
 DRAW = True
 
-PARTICULAR_NAME ='_just_vision'
+PARTICULAR_NAME ='_just_vision_cases_selected'
 VISION = 3
-N_ROWS = 5
-N_COLS = 5
+N_ROWS = 9
+N_COLS = 6
+METHOD_TO_SPEND_TIME = None
+CASES_TO_SPEND_TIME = None
+METHOD_FOR_HOUSE = None
+CASE_HOUSE = None
+METHOD_FOR_WALL = None
+CASE_WALL = None
 
 
 if __name__ == "__main__":
@@ -40,7 +46,8 @@ if __name__ == "__main__":
     sorted_files = sorted(files)
     last_file = sorted_files[-1]
 
-
+    new_directory = os.path.join(directory, last_file)
+    
     mouse_directory = directory+'/'+last_file +"/mouse"
     files = os.listdir(mouse_directory)
     mouse_name = max(files, key=lambda x: int(re.search(r'\d+', x).group()))
@@ -51,8 +58,11 @@ if __name__ == "__main__":
     cat_name = max(files, key=lambda x: int(re.search(r'\d+', x).group()))
     cat_name = os.path.join(cat_directory, cat_name)
     
-    # cat_name = ""
-    # mouse_name = ""
+    filepath = os.path.join(new_directory, 'variables.txt')
+    with open(filepath, 'r') as f:
+        for line in f:
+            exec(line.strip())
+    
 
     parser.add_argument("-mM", "--modelMouse", required=False, default=mouse_name,
                         help="Model file to load")
@@ -62,7 +72,7 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
 
-    env = GameEnv(N_ROWS, N_COLS, vision = VISION, method = "human")
+    env = GameEnv(N_COLS, N_ROWS, vision = VISION, method = "human", method_to_spend_time = METHOD_TO_SPEND_TIME, cases_to_spend_time = CASES_TO_SPEND_TIME, method_for_house = METHOD_FOR_HOUSE, case_house = CASE_HOUSE, method_for_wall = METHOD_FOR_WALL, case_wall = CASE_WALL)
     
     cat_net = dqn_model.DQN(env.cat_observation_space, HIDDEN_SIZE,
                         env.cat_action_space)
@@ -78,6 +88,7 @@ if __name__ == "__main__":
     mouse_state = torch.load(args.modelMouse, map_location=lambda stg, _: stg)
     
     mouse_net.load_state_dict(mouse_state)
+    
     
     while True :
     

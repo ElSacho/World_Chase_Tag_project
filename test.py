@@ -1,7 +1,15 @@
 import random
+import os
 
-random.seed(1)
+filepath = 'models/models_just_vision_003/variables.txt'
 
-cases_to_spend_time = random.sample(range(25-1), int(25*0.1))
+with open(filepath, 'r') as f:
+    for line in f:
+        exec(line.strip())
 
-print(cases_to_spend_time)
+# Afficher les variables lues du fichier de sauvegarde
+print(PARTICULAR_NAME)
+print(type(VISION))
+print(type(None))
+
+
