@@ -6,6 +6,7 @@ class colors:
     BLUE2 = (0, 100, 255)
     BLACK = (0,0,0)
     GREEN = (0, 200, 0)
+    GREEN2 = (30,255,20)
 
 class size:
     BLOCK_SIZE = 50

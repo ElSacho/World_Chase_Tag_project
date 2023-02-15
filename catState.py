@@ -16,6 +16,20 @@ class CatState(Cat):
         self.observation_space = (2*vision+1)**2+2
         self.action_space = 4
             
+    def get_value_case(self, case):
+        if case.has_mouse:
+            return 10
+        elif not case.is_allowed_to_cat and case.is_allowed_to_mouse:
+            return 5
+        elif not case.is_allowed_to_cat:
+            return -1
+        elif case.timeToSpend == 0:
+            return 1
+        else : 
+            return 1/case.timeToSpend
+            
+        
+
     # Get current state of the game  
     def get_state(self, mouse):
         self.view = []
@@ -24,11 +38,7 @@ class CatState(Cat):
             for y in range(pos[1]-self.vision, pos[1]+self.vision+1):
                 if self.pos_isValid([x,y]):
                     case_number = x*self.plateau.n_cols + y
-                    case_number_mouse = mouse.case_number
-                    if case_number == case_number_mouse:
-                        self.view.append(10)
-                    else :
-                        self.view.append(self.plateau.cases[case_number].timeToSpend)
+                    self.view.append(self.get_value_case(self.plateau.cases[case_number]))
                 else :
                     self.view.append(-1)
         pos_mouse = int(mouse.pos[1]/size.BLOCK_SIZE), int(mouse.pos[0]/size.BLOCK_SIZE)

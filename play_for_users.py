@@ -11,7 +11,7 @@ class Game:
     def __init__(self, n_cols, n_rows):
         self.n_cols = n_cols
         self.n_rows = n_rows
-        self.plateau = Plateau(n_cols, n_rows)
+        self.plateau = Plateau(n_cols, n_rows,  method_to_spend_time = 'random', cases_to_spend_time = None, method_for_house = 'random', case_house = None, method_for_wall = 'random', case_wall = None )
         self.mouse = MouseState(0, self.plateau)
         self.cat = CatState( n_cols* n_rows -1, self.plateau)
         self.nb_step = 0
@@ -37,7 +37,7 @@ class Game:
         return self.cat.hasEaten(self.mouse)
     
 if __name__ == '__main__':
-    game = Game(15, 15)
+    game = Game(5, 5)
     
     #game loop
     while True:

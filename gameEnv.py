@@ -10,13 +10,13 @@ import numpy as np
 
 # Define the environment class
 class GameEnv:
-    def __init__(self, n_cols, n_rows, vision = 2, method = 'speed'):
+    def __init__(self, n_cols, n_rows, vision = 2, method = 'speed',  method_to_spend_time = "random", cases_to_spend_time = None, method_for_house = "random", case_house = None, method_for_wall = "random", case_wall = None ):
         self.method = method
         self.n_cols = n_cols
         self.clock = pygame.time.Clock()
         self.n_rows = n_rows
         self.vision = vision
-        self.plateau = Plateau(n_cols, n_rows)
+        self.plateau = Plateau(n_cols, n_rows,  method_to_spend_time = method_to_spend_time, cases_to_spend_time = cases_to_spend_time, method_for_house = method_for_house, case_house = case_house, method_for_wall = method_for_wall, case_wall = case_wall )
         pos = random.sample(range(n_cols * n_rows), 2)
         self.mouse = MouseState(pos[0], self.plateau, vision)
         self.cat = CatState( pos[1], self.plateau, vision)
@@ -39,12 +39,16 @@ class GameEnv:
         
     def reset_cat(self):
         # pos = random.sample(range(10), 2)
+        self.plateau.cases[self.mouse.case_number].has_mouse = False
+        self.plateau.cases[self.cat.case_number].has_cat = False
         case_number_ini = random.sample(range(self.n_cols * self.n_rows), 2)
         self.mouse = MouseState(case_number_ini[0], self.plateau, vision = self.vision)
         self.cat = CatState( case_number_ini[1], self.plateau, vision = self.vision)
         return self.cat.get_state(self.mouse)
     
     def reset_mouse(self):
+        self.plateau.cases[self.mouse.case_number].has_mouse = False
+        self.plateau.cases[self.cat.case_number].has_cat = False
         case_number_ini = random.sample(range(self.n_cols * self.n_rows), 2)
         self.mouse = MouseState(case_number_ini[0], self.plateau, vision = self.vision)
         self.cat = CatState( case_number_ini[1], self.plateau, vision = self.vision)

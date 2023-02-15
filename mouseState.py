@@ -6,6 +6,7 @@ import math
 from mouse import Mouse
 import random
 import collections
+from plateau import Case
 
 
 class MouseState(Mouse):
@@ -18,6 +19,20 @@ class MouseState(Mouse):
         self.action_space = 4
         self.action_counter = collections.Counter()
       
+      
+    def get_value_case(self, case):
+        if case.has_cat:
+            return -1
+        elif not case.is_allowed_to_mouse:
+            return -1
+        elif not case.is_allowed_to_cat:
+            return 3
+        elif case.timeToSpend == 0:
+            return 1
+        else : 
+            return 1/case.timeToSpend
+            
+      
     # Get current state of the game  
     def get_state(self, cat):
         self.view = []
@@ -26,7 +41,7 @@ class MouseState(Mouse):
             for y in range(pos[1]-self.vision, pos[1]+self.vision+1):
                 if self.pos_isValid([x,y]):
                     case_number = x*self.plateau.n_cols + y
-                    self.view.append(self.plateau.cases[case_number].timeToSpend)
+                    self.view.append(self.get_value_case(self.plateau.cases[case_number]))
                 else :
                     self.view.append(-1)
         pos_cat = int(cat.pos[1]/size.BLOCK_SIZE), int(cat.pos[0]/size.BLOCK_SIZE)
