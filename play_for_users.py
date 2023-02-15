@@ -12,8 +12,8 @@ class Game:
         self.n_cols = n_cols
         self.n_rows = n_rows
         self.plateau = Plateau(n_cols, n_rows,  method_to_spend_time = 'random', cases_to_spend_time = None, method_for_house = 'random', case_house = None, method_for_wall = 'random', case_wall = None )
-        self.mouse = MouseState(0, self.plateau)
-        self.cat = CatState( n_cols* n_rows -1, self.plateau)
+        self.mouse = MouseState(0, self.plateau, vision=1)
+        self.cat = CatState( n_cols* n_rows -1, self.plateau, vision=1)
         self.nb_step = 0
         SCREEN_SIZE = (n_cols*size.BLOCK_SIZE, n_rows*size.BLOCK_SIZE)
         self.screen =  pygame.display.set_mode(SCREEN_SIZE)
@@ -24,10 +24,12 @@ class Game:
         self.nb_step +=1
         if self.nb_step % 2 == 0 :
             self.mouse.move_with_keyboard()
-            self.mouse.get_state(self.cat)
+            state = self.mouse.get_state(self.cat)
+            # print(state)
         else : 
             self.cat.move_with_keyboard()
-            self.cat.get_state(self.mouse)
+            state = self.cat.get_state(self.mouse)
+            print(state)
         # print(self.cat.pos)
         
         self.plateau.draw_plateau(self.screen) 

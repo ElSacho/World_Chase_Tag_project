@@ -19,6 +19,11 @@ FPS = 25
 HIDDEN_SIZE = 128
 DRAW = True
 
+PARTICULAR_NAME ='_just_vision'
+VISION = 3
+N_ROWS = 5
+N_COLS = 5
+
 
 if __name__ == "__main__":
     
@@ -26,9 +31,12 @@ if __name__ == "__main__":
 
     # on ouvre automatiquement le dernier model crée
     directory = "models"
-    files = os.listdir(directory)
+    
+    if PARTICULAR_NAME == '':
+        files = os.listdir(directory)
+    else :
+        files = [f for f in os.listdir(directory) if PARTICULAR_NAME in f]
 
-    files = os.listdir(directory)
     sorted_files = sorted(files)
     last_file = sorted_files[-1]
 
@@ -54,7 +62,7 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
 
-    env = GameEnv(5,5, vision = 1, method = "human")
+    env = GameEnv(N_ROWS, N_COLS, vision = VISION, method = "human")
     
     cat_net = dqn_model.DQN(env.cat_observation_space, HIDDEN_SIZE,
                         env.cat_action_space)

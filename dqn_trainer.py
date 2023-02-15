@@ -37,6 +37,9 @@ EPSILON_DECAY_LAST_FRAME = 150000
 EPSILON_START = 1.0
 EPSILON_FINAL = 0.03
 
+PARTICULAR_NAME ='_just_vision'
+VISION = 3
+
 
 Experience = collections.namedtuple(
     'Experience', field_names=['state', 'action', 'reward',
@@ -164,17 +167,15 @@ def calc_loss(batch, net, tgt_net, device="©"):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     
-    particular_name = ''
-    
     i = 1
     while i <= 100:
-        folder_name = 'models/models' + particular_name + '_{:03d}'.format(i)
+        folder_name = 'models/models' + PARTICULAR_NAME + '_{:03d}'.format(i)
         if not os.path.exists(folder_name):
             break
         i += 1
         
     if i <= 100:
-        next_folder_name = 'models/models' + particular_name + '_{:03d}'.format(i)
+        next_folder_name = 'models/models' + PARTICULAR_NAME + '_{:03d}'.format(i)
         os.mkdir(next_folder_name)
         mouse_folder_name = os.path.join(next_folder_name, "mouse")
         cat_folder_name = os.path.join(next_folder_name, "cat")
@@ -195,7 +196,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     device = torch.device("cuda" if args.cuda else "cpu")
 
-    env = GameEnv(5,5, vision = 1, method = "speed")
+    env = GameEnv(5,5, vision = VISION, method = "speed")
 
     mouse_net = dqn_model.DQN(env.mouse_observation_space, HIDDEN_SIZE,
                         env.mouse_action_space).to(device)

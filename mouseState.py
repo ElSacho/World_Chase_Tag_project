@@ -16,13 +16,14 @@ class MouseState(Mouse):
         self.position_ini = [(starting_position % plateau.n_cols ), (starting_position // plateau.n_rows)]
         # La vision plus l'ecart de position avec le chasseur
         self.observation_space = (2*vision+1)**2+2
+        self.observation_space = (2*vision+1)**2
         self.action_space = 4
         self.action_counter = collections.Counter()
       
       
     def get_value_case(self, case):
         if case.has_cat:
-            return -1
+            return -10
         elif not case.is_allowed_to_mouse:
             return -1
         elif not case.is_allowed_to_cat:
@@ -50,8 +51,8 @@ class MouseState(Mouse):
         pos_1 = pos[1]-pos_cat[1]
         pos_0 = np.sign(pos_0)*max(abs(pos_0), self.vision)
         pos_1 = np.sign(pos_1)*max(abs(pos_1), self.vision)
-        self.view.append(pos_0)
-        self.view.append(pos_1)
+        # self.view.append(pos_0)
+        # self.view.append(pos_1)
         return np.array(self.view)
 
 
