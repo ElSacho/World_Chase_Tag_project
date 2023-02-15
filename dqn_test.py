@@ -21,6 +21,7 @@ DRAW = True
 
 
 if __name__ == "__main__":
+    
     parser = argparse.ArgumentParser()
 
     # on ouvre automatiquement le dernier model crée
