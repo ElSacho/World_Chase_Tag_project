@@ -20,6 +20,7 @@ from catState import CatState
 from mouseState import MouseState
 from gameEnv import GameEnv
 
+from tensorboardX import SummaryWriter
 
 
 DEFAULT_ENV_NAME = "ChaseTag"
@@ -37,12 +38,12 @@ EPSILON_DECAY_LAST_FRAME = 150000
 EPSILON_START = 1.0
 EPSILON_FINAL = 0.03
 
-PARTICULAR_NAME ='_just_vision_cases_selected'
+PARTICULAR_NAME ='nothing_5x5'
 VISION = 4
 N_ROWS = 5
 N_COLS = 5
 METHOD_TO_SPEND_TIME = None
-CASES_TO_SPEND_TIME = [0,6,12,18,24]
+CASES_TO_SPEND_TIME = None
 METHOD_FOR_HOUSE = None
 CASE_HOUSE = None
 METHOD_FOR_WALL = None
@@ -176,19 +177,21 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     
     i = 1
-    while i <= 100:
+    while i <= 999:
         folder_name = 'models/models' + PARTICULAR_NAME + '_{:03d}'.format(i)
         if not os.path.exists(folder_name):
             break
         i += 1
         
-    if i <= 100:
+    if i <= 998:
         next_folder_name = 'models/models' + PARTICULAR_NAME + '_{:03d}'.format(i)
         os.mkdir(next_folder_name)
         mouse_folder_name = os.path.join(next_folder_name, "mouse")
         cat_folder_name = os.path.join(next_folder_name, "cat")
         os.mkdir(mouse_folder_name)
         os.mkdir(cat_folder_name)
+    else :
+        raise('To many folders')
         
     # Le nom du fichier de sauvegarde
     filename = 'variables.txt'
@@ -226,6 +229,10 @@ if __name__ == "__main__":
     # parser.add_argument("-m2", "--model2", required=False, default="PongNoFrameskip-v4-best_11.dat",
     #                     help="Model file to load")
     args = parser.parse_args()
+    
+    writer_cat = SummaryWriter(comment="-cat" + args.env)
+    writer_mouse = SummaryWriter(comment="-mouse" + args.env)
+    
     device = torch.device("cuda" if args.cuda else "cpu")
 
     env = GameEnv(N_COLS, N_ROWS, vision = VISION, method = "speed", method_to_spend_time = METHOD_TO_SPEND_TIME, cases_to_spend_time = CASES_TO_SPEND_TIME, method_for_house = METHOD_FOR_HOUSE, case_house = CASE_HOUSE, method_for_wall = METHOD_FOR_WALL, case_wall = CASE_WALL)
@@ -296,6 +303,10 @@ if __name__ == "__main__":
                 frame_idx, len(cat_total_rewards), cat_m_reward, epsilon,
                 speed
             ))
+            writer_cat.add_scalar("epsilon cat", epsilon, frame_idx)
+            writer_cat.add_scalar("speed cat", speed, frame_idx)
+            writer_cat.add_scalar("reward_100 cat", cat_m_reward, frame_idx)
+            writer_cat.add_scalar("reward cat", cat_reward, frame_idx)
             if cat_best_m_reward is None or cat_best_m_reward < cat_m_reward:
                 torch.save(cat_net.state_dict(), cat_folder_name +"/"+ args.env +
                             "-best_%.0f.dat" % cat_m_reward)
@@ -333,6 +344,10 @@ if __name__ == "__main__":
                 frame_idx, len(mouse_total_rewards), mouse_m_reward, epsilon,
                 speed
             ))
+            writer_mouse.add_scalar("epsilon mouse", epsilon, frame_idx)
+            writer_mouse.add_scalar("speed mouse", speed, frame_idx)
+            writer_mouse.add_scalar("reward_100 cat", mouse_m_reward, frame_idx)
+            writer_mouse.add_scalar("reward mouse", mouse_reward, frame_idx)
             c_mouse = collections.Counter()
             if mouse_best_m_reward is None or mouse_best_m_reward < mouse_m_reward:
                 torch.save(mouse_net.state_dict(), mouse_folder_name +"/"+ args.env +
@@ -356,4 +371,6 @@ if __name__ == "__main__":
         mouse_loss_t = calc_loss(mouse_batch, mouse_net, mouse_tgt_net, device=device)
         mouse_loss_t.backward()
         mouse_optimizer.step()
+    writer_cat.close()
+    writer_mouse.close()
         

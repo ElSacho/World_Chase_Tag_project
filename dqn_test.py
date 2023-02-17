@@ -19,7 +19,7 @@ FPS = 25
 HIDDEN_SIZE = 128
 DRAW = True
 
-PARTICULAR_NAME ='_just_vision_cases_selected'
+PARTICULAR_NAME ='nothing_5x5'
 VISION = 3
 N_ROWS = 9
 N_COLS = 6

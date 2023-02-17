@@ -24,6 +24,8 @@ class MouseState(Mouse):
     def get_value_case(self, case):
         if case.has_cat:
             return -10
+        elif case.has_mouse:
+            return -3
         elif not case.is_allowed_to_mouse:
             return -1
         elif not case.is_allowed_to_cat:

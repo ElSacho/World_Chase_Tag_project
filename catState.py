@@ -20,6 +20,8 @@ class CatState(Cat):
     def get_value_case(self, case):
         if case.has_mouse:
             return 10
+        if case.has_cat:
+            return -3
         elif not case.is_allowed_to_cat and case.is_allowed_to_mouse:
             return 5
         elif not case.is_allowed_to_cat:
@@ -27,8 +29,7 @@ class CatState(Cat):
         elif case.timeToSpend == 0:
             return 1
         else : 
-            return 1/case.timeToSpend
-            
+            return 1/case.timeToSpend 
         
 
     # Get current state of the game  
