@@ -11,6 +11,8 @@ class DQN(nn.Module):
         self.net = nn.Sequential(
             nn.Linear(input_shape, hidden_size),
             nn.ReLU(),
+            nn.Linear(hidden_size, hidden_size),
+            nn.ReLU(),
             nn.Linear(hidden_size, n_actions)
         )
 

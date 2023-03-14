@@ -38,15 +38,15 @@ EPSILON_DECAY_LAST_FRAME = 150000
 EPSILON_START = 1.0
 EPSILON_FINAL = 0.03
 
-PARTICULAR_NAME ='nothing_5x5'
+PARTICULAR_NAME ='_5x5_walls_and_red'
 VISION = 4
 N_ROWS = 5
 N_COLS = 5
-METHOD_TO_SPEND_TIME = None
+METHOD_TO_SPEND_TIME = "random"
 CASES_TO_SPEND_TIME = None
 METHOD_FOR_HOUSE = None
 CASE_HOUSE = None
-METHOD_FOR_WALL = None
+METHOD_FOR_WALL = "random"
 CASE_WALL = None
 
 
@@ -85,6 +85,9 @@ class CatAgent:
     def _reset(self):
         self.state = env.reset_cat()
         self.total_reward = 0.0
+        
+    def get_state(self):
+        self.state = env.get_state_cat()
 
     @torch.no_grad()
     def play_step(self, net, epsilon=0.0, device="cpu"):
@@ -146,6 +149,9 @@ class MouseAgent(MouseState):
             done_reward = self.total_reward
             self._reset()
         return done_reward
+    
+    def get_state(self):
+        self.state = env.get_state_mouse()
 
 
 
@@ -284,6 +290,7 @@ if __name__ == "__main__":
     c_mouse = collections.Counter()
 
     while True:
+        mouse_reward = None
         frame_idx += 1
         # print(frame_idx)
         epsilon = max(EPSILON_FINAL, EPSILON_START -
@@ -291,16 +298,18 @@ if __name__ == "__main__":
         
 
         #train the cat
+        cat_agent.get_state()
         cat_reward = cat_agent.play_step(cat_net, epsilon, device=device)
         if cat_reward is not None:
+            mouse_reward = -1
             cat_total_rewards.append(cat_reward)
             speed = (frame_idx - ts_frame) / (time.time() - ts)
             ts_frame = frame_idx
             ts = time.time()
             cat_m_reward = np.mean(cat_total_rewards[-100:])
-            print("%d: done %d games, reward %.3f, "
+            print("%d: actions done, reward %.3f, "
                     "eps %.2f, speed %.2f f/s" % (
-                frame_idx, len(cat_total_rewards), cat_m_reward, epsilon,
+                frame_idx, cat_m_reward, epsilon,
                 speed
             ))
             writer_cat.add_scalar("epsilon cat", epsilon, frame_idx)
@@ -332,6 +341,21 @@ if __name__ == "__main__":
 
         #train the mouse
         mouse_reward = mouse_agent.play_step(mouse_net, epsilon, device=device)
+        
+        try :
+            if mouse_reward != -1:
+                # print("reward not -1")
+                mouse_reward = mouse_agent.play_step(mouse_net, epsilon, device=device)
+            elif mouse_reward == -1:
+                # print(env.cat.step)
+                # print(mouse_agent.total_reward)
+                mouse_reward += mouse_agent.total_reward
+                # print(mouse_reward)
+                mouse_agent._reset()
+        except :
+            print("Except")
+            mouse_agent.get_state()
+            mouse_reward = mouse_agent.play_step(mouse_net, epsilon, device=device)
 
         if mouse_reward is not None:
             mouse_total_rewards.append(mouse_reward)
@@ -339,9 +363,9 @@ if __name__ == "__main__":
             ts_frame = frame_idx
             ts = time.time()
             mouse_m_reward = np.mean(mouse_total_rewards[-100:])
-            print("%d: done %d games, reward %.3f, "
+            print("%d: actions done, reward %.3f, "
                 "eps %.2f, speed %.2f f/s" % (
-                frame_idx, len(mouse_total_rewards), mouse_m_reward, epsilon,
+                frame_idx, mouse_m_reward, epsilon,
                 speed
             ))
             writer_mouse.add_scalar("epsilon mouse", epsilon, frame_idx)

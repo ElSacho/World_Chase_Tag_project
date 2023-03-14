@@ -73,6 +73,11 @@ class MouseState(Mouse):
     def get_reward(self, cat, method = "difference_with_cat_position"):
         if method == 'simple':
             return 1
+        elif method == 'simple_but_intelligent':
+            distance_min = abs(self.position_ini[0]-cat.position_ini[0])+abs(self.position_ini[1]-cat.position_ini[1])
+            if cat.step > distance_min:
+                return 1
+            return 0
         elif method == 'with_position':
             pos = int(self.pos[1]/size.BLOCK_SIZE), int(self.pos[0]/size.BLOCK_SIZE)
             pos_cat = int(cat.pos[1]/size.BLOCK_SIZE), int(cat.pos[0]/size.BLOCK_SIZE)
